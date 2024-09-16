@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image, Pressable } from 'react-native';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -14,37 +15,31 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { useState } from "react";
 import LottieView from "lottie-react-native";
+
 export default function App() {
   const [isPressedSubmit, setIsPressedSubmit] = useState(false);
   const [isPressedGoogle, setIsPressedGoogle] = useState(false);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <View style={styles.innerContainer}>
-        {/* Background Image */}
-        <LottieView
-        source={require("./assets/train.json")}
-        // ref={animation}
-        style={{
-          height: 260,
-          width: 300,
-          alignSelf: "center",
-          marginTop: 40,
-          justifyContent: "center",
-        }}
-        autoPlay
-        loop={false}
-        speed={0.7}
-      />
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Welcome </Text>
-          <Text style={styles.headerText}>Please SignIn </Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.headerTextContainer}>
+        <FontAwesome5 name="hand-holding-heart" size={40} color="#10172a" />
+          <Text style={styles.headerText}>Welcome !!  </Text>
+          <Text style={styles.headerText}>Please Sign In </Text>
         </View>
+        <LottieView
+          source={require("./assets/welcome.json")} // Your animation JSON file
+          style={styles.animation}
+          autoPlay
+          loop
+        />
+      </View>
 
-        {/* Footer */}
+      <KeyboardAvoidingView
+        style={styles.innerContainer}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
         <View style={styles.footer}>
           <View style={styles.inputContainer}>
             {/* Email Input */}
@@ -78,7 +73,7 @@ export default function App() {
           >
             {!isPressedSubmit ? (
               <LinearGradient
-                colors={['#8A2BE2', '#FF1493']} // Purple to Pink
+                colors={['#8A2BE2', '#FF1493']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.gradientButton}
@@ -101,7 +96,7 @@ export default function App() {
           >
             {isPressedGoogle ? (
               <LinearGradient
-                colors={['#FF69B4', '#FF6347']} // Pink to Orange gradient
+                colors={['#FF69B4', '#FF6347']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.gradientButton}
@@ -112,10 +107,27 @@ export default function App() {
               <Text style={styles.pressedButtonText}>Continue with Google</Text>
             )}
           </Pressable>
+
+             {/* Footer with Social Icons */}
+        <View style={styles}>
+          <Text style={styles.footerTitle}>Follow Us</Text>
+          <View className="flex-row">
+          <View style={styles.iconRow}>
+            <AntDesign name="linkedin-square" size={24} color="white" />
+            <AntDesign name="facebook-square" size={24} color="white" />
+            <AntDesign name="instagram" size={24} color="white" />
+            <AntDesign name="github" size={24} color="white" />
+          </View>
+          <Text style={styles.copyright}>
+            &copy; {new Date().getFullYear()} Sangam & Rustam
+          </Text>
+          </View>
+        </View> 
+
+
         </View>
-      </View>
-      {/* <StatusBar style="auto" /> */}
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -135,42 +147,45 @@ const InputField = ({ icon, placeholder, secureTextEntry = false }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent', // Ensure background is transparent to see the image
+    backgroundColor: 'white',
   },
   innerContainer: {
     flex: 1,
-    justifyContent: 'center', // Center content vertically
-  },
-  backgroundImage: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    top: 0,
-    left: 0,
-    zIndex: -1, // Place the image behind other components
-    resizeMode: "contain"
+    justifyContent: 'center',
   },
   header: {
-    flex: 1 / 3,
-    justifyContent: 'center',
+    flex: 1/2,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginTop: 50,
+  },
+  headerTextContainer: {
+    flex: 1,
   },
   headerText: {
-    color: "blue",
-    fontSize: 24,
+    color: "black",
+    fontSize: 20,
+    fontWeight:"bold"
+  },
+  animation: {
+    width: 200,
+    height: 200,
   },
   footer: {
-    flex: 2 / 3,
+    flex: 1,
     backgroundColor: '#10172a',
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
-    elevation: 20,
-    shadowColor: 'black',
+    elevation: 0,
+    shadowColor: 'red',
     shadowOpacity: 1,
-    shadowOffset: { width: 0, height: 10 },
-    shadowRadius: 20,
-    paddingVertical: 20,
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 10,
+    paddingVertical: 10,
     paddingHorizontal: 20,
+  
   },
   inputContainer: {
     flexDirection: "column",
@@ -197,14 +212,15 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 20,
     overflow: 'hidden',
+    marginVertical:10,
   },
   pressedButtonContainer: {
-    borderWidth: 2,
+    borderWidth: 0,
     borderColor: '#8A2BE2',
   },
   gradientButton: {
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 0,
     alignItems: 'center',
     shadowColor: 'black',
     shadowOpacity: 1,
@@ -223,5 +239,21 @@ const styles = StyleSheet.create({
     color: '#8A2BE2',
     fontSize: 18,
     backgroundColor: 'white',
+  },
+  footerTitle: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: 'white',
+  },
+  iconRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '40%',
+    marginVertical: 0,
+  },
+  copyright: {
+    color: 'white',
+    marginTop: 0,
   },
 });
