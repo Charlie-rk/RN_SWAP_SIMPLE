@@ -1,225 +1,179 @@
 import { StatusBar } from "expo-status-bar";
-import { LinearGradient } from 'expo-linear-gradient';
-import { Image, Pressable } from 'react-native';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { NavigationContainer } from "@react-navigation/native";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  Text,
+  Button,
+  ImageBackground,
   TextInput,
   View,
+  Dimensions,
   StyleSheet,
+  Pressable,
+  Text,
 } from "react-native";
-import Fontisto from "@expo/vector-icons/Fontisto";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
+import { LinearGradient } from 'expo-linear-gradient';
+import MyButton from "./components/MyButton";
 import { useState } from "react";
-import LottieView from "lottie-react-native";
+import PnrCard from "./components/PnrCard";
 
-export default function App() {
-  const [isPressedSubmit, setIsPressedSubmit] = useState(false);
-  const [isPressedGoogle, setIsPressedGoogle] = useState(false);
+const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
+function HomeScreen({ navigation }) {
+  const handlePress = () => {
+    console.log("Hii i am preeseed");
+    // navigation.navigate("Notifications");
+  };
+  const [pressed, setPressed] = useState(false);
+
+  const isUserLoggedIn = false; 
   return (
+    <>
+    <PnrCard/>
+  
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerTextContainer}>
-        <FontAwesome5 name="hand-holding-heart" size={40} color="#10172a" />
-          <Text style={styles.headerText}>Welcome !!  </Text>
-          <Text style={styles.headerText}>Please Sign In </Text>
-        </View>
-        <LottieView
-          source={require("./assets/welcome.json")} // Your animation JSON file
-          style={styles.animation}
-          autoPlay
-          loop
-        />
+      <View style={styles.imageContainer}>
+        {/* Background Image */}
+        <ImageBackground
+          source={require("./assets/home1.jpg")}
+          style={styles.image}
+          resizeMode="cover"
+        >
+          {/* Linear Gradient with PNR Input on top of Image */}
+          <LinearGradient
+            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0)']}
+            style={styles.overlay}
+          >
+            <LinearGradient
+              colors={['black', 'rgba(0,0,0,0.6)', 'black']} // Gradient from indigo to pink
+              start={[0, 0]}
+              end={[1, 0]}
+              style={styles.inputWrapper}
+            >
+              <TextInput
+                style={styles.input}
+                placeholder="PNR input..."
+                placeholderTextColor="#000"
+              />
+              {/* <Button
+                onPress={() => navigation.navigate("Notifications")}
+                title="Please Log-in"
+                color=""
+                className="bg-slate-300"
+              /> */}
+             <Pressable
+            onPressIn={() => setPressed(true)}
+            onPressOut={() => setPressed(false)}
+            onPress={handlePress}
+            style={[
+              styles.buttonContainer,
+              pressed && styles.pressedButtonContainer,
+            ]}
+          >
+            {!pressed ? (
+              <LinearGradient
+              colors={['grey', 'rgba(0,0,0,0.6)', 'grey']} 
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.gradientButton}
+              >
+                <Text style={styles.buttonText}>Know Your Pnr Status</Text>
+              </LinearGradient>
+            ) : (
+              <Text style={styles.pressedButtonText}>Know Your Pnr Status</Text>
+            )}
+          </Pressable>
+    {/* </View> */}
+            </LinearGradient>
+          </LinearGradient>
+        </ImageBackground>
       </View>
 
-      <KeyboardAvoidingView
-        style={styles.innerContainer}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <View style={styles.footer}>
-          <View style={styles.inputContainer}>
-            {/* Email Input */}
-            <InputField
-              icon={<Fontisto name="email" size={24} color="grey" />}
-              placeholder="Enter your email"
-            />
-
-            {/* Name Input */}
-            <InputField
-              icon={<AntDesign name="user" size={24} color="grey" />}
-              placeholder="Enter your name"
-            />
-
-            {/* Password Input */}
-            <InputField
-              icon={<EvilIcons name="lock" size={30} color="red" />}
-              placeholder="Enter your password"
-              secureTextEntry
-            />
-          </View>
-
-          {/* Submit Button */}
-          <Pressable
-            onPressIn={() => setIsPressedSubmit(true)}
-            onPressOut={() => setIsPressedSubmit(false)}
-            style={[
-              styles.buttonContainer,
-              isPressedSubmit && styles.pressedButtonContainer,
-            ]}
-          >
-            {!isPressedSubmit ? (
-              <LinearGradient
-                colors={['#8A2BE2', '#FF1493']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.gradientButton}
-              >
-                <Text style={styles.buttonText}>Submit</Text>
-              </LinearGradient>
-            ) : (
-              <Text style={styles.pressedButtonText}>Submit</Text>
-            )}
-          </Pressable>
-
-          {/* Continue with Google Button */}
-          <Pressable
-            onPressIn={() => setIsPressedGoogle(true)}
-            onPressOut={() => setIsPressedGoogle(false)}
-            style={[
-              styles.buttonContainer,
-              isPressedGoogle && styles.pressedButtonContainer,
-            ]}
-          >
-            {isPressedGoogle ? (
-              <LinearGradient
-                colors={['#FF69B4', '#FF6347']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.gradientButton}
-              >
-                <Text style={styles.buttonText}>Continue with Google</Text>
-              </LinearGradient>
-            ) : (
-              <Text style={styles.pressedButtonText}>Continue with Google</Text>
-            )}
-          </Pressable>
-
-             {/* Footer with Social Icons */}
-        <View style={styles}>
-          <Text style={styles.footerTitle}>Follow Us</Text>
-          <View className="flex-row">
-          <View style={styles.iconRow}>
-            <AntDesign name="linkedin-square" size={24} color="white" />
-            <AntDesign name="facebook-square" size={24} color="white" />
-            <AntDesign name="instagram" size={24} color="white" />
-            <AntDesign name="github" size={24} color="white" />
-          </View>
-          <Text style={styles.copyright}>
-            &copy; {new Date().getFullYear()} Sangam & Rustam
-          </Text>
-          </View>
-        </View> 
-
-
+      {/* Below section for PNR details */}
+      <View style={styles.detailsContainer}>
+        {/* PNR Details card (implementation pending) */}
+        <View style={styles.card}>
+          <Button
+            onPress={() => navigation.navigate("Notifications")}
+            title="Check PNR Status"
+            color="#000"
+          />
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </View>
+    </>
   );
 }
 
-// Reusable Input Field component
-const InputField = ({ icon, placeholder, secureTextEntry = false }) => (
-  <View style={styles.inputField}>
-    {icon}
-    <TextInput
-      placeholder={placeholder}
-      secureTextEntry={secureTextEntry}
-      style={styles.textInput}
-    />
-  </View>
-);
-
-// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
-  innerContainer: {
+  imageContainer: {
+    height: height * 0.3, // Adjust image height
+    width: width, // Full width of the screen
+  },
+  image: {
     flex: 1,
-    justifyContent: 'center',
-  },
-  header: {
-    flex: 1/2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginTop: 50,
-  },
-  headerTextContainer: {
-    flex: 1,
-  },
-  headerText: {
-    color: "black",
-    fontSize: 20,
-    fontWeight:"bold"
-  },
-  animation: {
-    width: 200,
-    height: 200,
-  },
-  footer: {
-    flex: 1,
-    backgroundColor: '#10172a',
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
-    elevation: 0,
-    shadowColor: 'red',
-    shadowOpacity: 1,
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-  
-  },
-  inputContainer: {
-    flexDirection: "column",
-    marginVertical: 20,
-  },
-  inputField: {
-    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
-    height: 50,
-    borderRadius: 18,
-    backgroundColor: "#f0f0f0",
-    paddingHorizontal: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 10,
-    elevation: 3,
-    marginBottom: 20,
   },
-  textInput: {
+  overlay: {
     flex: 1,
-    paddingHorizontal: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    width: '100%',
+  },
+  inputWrapper: {
+    padding: 0,
+    borderRadius: 10,
+    width: '90%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    borderColor: "#374151",
+    backgroundColor: "#374151",
+    borderWidth: 1,
+    width: "100%",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+    textAlign: "center",
+    height: 50,
+    color:"white",
+  },
+  detailsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#1e293b", // Dark background
+  },
+  card: {
+    backgroundColor: "#4f46e5",
+    padding: 20,
+    borderRadius: 10,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+    alignItems: "center",
   },
   buttonContainer: {
-    borderRadius: 20,
+    borderRadius: 10,
     overflow: 'hidden',
     marginVertical:10,
+    // paddingHorizontal:6,
   },
   pressedButtonContainer: {
     borderWidth: 0,
     borderColor: '#8A2BE2',
+    // paddingHorizontal:6,
   },
   gradientButton: {
-    paddingVertical: 10,
+    paddingVertical: 0,
+    paddingHorizontal:6,
     borderRadius: 0,
     alignItems: 'center',
     shadowColor: 'black',
@@ -230,30 +184,35 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 16,
   },
   pressedButtonText: {
-    paddingVertical: 10,
-    borderRadius: 10,
+    paddingVertical: 0,
+    paddingHorizontal:6,
+    borderRadius: 0,
     textAlign: 'center',
     color: '#8A2BE2',
-    fontSize: 18,
+    fontSize: 16,
     backgroundColor: 'white',
   },
-  footerTitle: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: 'white',
-  },
-  iconRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '40%',
-    marginVertical: 0,
-  },
-  copyright: {
-    color: 'white',
-    marginTop: 0,
-  },
 });
+
+function NotificationsScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Button onPress={() => navigation.goBack()} title="Go back home" />
+    </View>
+  );
+}
+
+const Drawer = createDrawerNavigator();
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Drawer.Navigator initialRouteName="Home">
+        <Drawer.Screen name="Home" component={HomeScreen} />
+        <Drawer.Screen name="Notifications" component={NotificationsScreen} />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
+}
