@@ -1,5 +1,4 @@
 import { StatusBar } from "expo-status-bar";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   Button,
@@ -10,31 +9,88 @@ import {
   StyleSheet,
   Pressable,
   Text,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
-import MyButton from "./components/MyButton";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 // import PnrCard from "./components/PnrCard";
+import PnrCard from './../components/PnrCard';
+import { setTravelID } from "../redux/user/userSlice";
 
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
-function HomeScreen({ navigation }) {
-  const handlePress = () => {
-    console.log("Hii i am preeseed");
-    // navigation.navigate("Notifications");
-  };
+const Home=()=>{
+  const { currentUser } = useSelector((state) => state.user);
+  const [pnr, setPnr] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [travel, setTravel] = useState({});
+  const [loading, setLoading] = useState(false);
+  const pnrCardRef = useRef();
+   
+  const dispatch=useDispatch();
+
+//   const scrollUp=()=>{
+//     window.scrollTo({
+//         top:420,
+//         behavior:"smooth"
+//     })
+// }
+
+    const handleSubmit=async()=>{
+      console.log(pnr);
+      setLoading(true);
+      try{
+      setSuccess(false);
+      const res = await fetch(`http://10.10.92.56:3000/api/pnr/${pnr}?userId=${currentUser._id}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log(data);
+        console.log("listen---******",data.travel);
+       
+        setLoading(false);
+        setTravel(data.travel);
+        console.log(data.travel._id);
+        // Scroll to the section where PnrCard is displayed
+        dispatch(setTravelID({ travel__Id: data.travel._id }));
+        console.log(data.travel._id);
+        console.log("Travel before navigate -----");
+        console.log(travel);
+        setSuccess(true);
+        // scrollUp();
+       
+      } else {
+        setLoading(false);
+        console.log('Request failed with status:', res.status);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log('Error:', error);
+    }
+
+    } ;
+
+  // console.log("User",currentUser);
+  // const handlePress = () => {
+  //   console.log("Hii i am preeseed");
+  //   // navigation.navigate("Notifications");
+  // };
   const [pressed, setPressed] = useState(false);
 
-  const isUserLoggedIn = false; 
   return (
     <>
     {/* <PnrCard/> */}
   
     <View style={styles.container}>
       <View style={styles.imageContainer}>
+   
         {/* Background Image */}
         <ImageBackground
-          source={require("./assets/home1.jpg")}
+          source={require("../assets/home1.jpg")}
           style={styles.image}
           resizeMode="cover"
         >
@@ -53,36 +109,31 @@ function HomeScreen({ navigation }) {
                 style={styles.input}
                 placeholder="PNR input..."
                 placeholderTextColor="#000"
+                value={pnr}
+                onChangeText={(text)=>setPnr(text)}
               />
-              {/* <Button
-                onPress={() => navigation.navigate("Notifications")}
-                title="Please Log-in"
-                color=""
-                className="bg-slate-300"
-              /> */}
              <Pressable
-            onPressIn={() => setPressed(true)}
-            onPressOut={() => setPressed(false)}
-            onPress={handlePress}
-            style={[
-              styles.buttonContainer,
-              pressed && styles.pressedButtonContainer,
-            ]}
-          >
-            {!pressed ? (
-              <LinearGradient
-              colors={['grey', 'rgba(0,0,0,0.6)', 'grey']} 
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.gradientButton}
+                onPressIn={() => setPressed(true)}
+                onPressOut={() => setPressed(false)}
+                onPress={handleSubmit}
+                style={[
+                  styles.buttonContainer,
+                  pressed && styles.pressedButtonContainer,
+                ]}
               >
-                <Text style={styles.buttonText}>Know Your Pnr Status</Text>
-              </LinearGradient>
-            ) : (
-              <Text style={styles.pressedButtonText}>Know Your Pnr Status</Text>
-            )}
-          </Pressable>
-    {/* </View> */}
+                {!pressed ? (
+                  <LinearGradient
+                    colors={['grey', 'rgba(0,0,0,0.6)', 'grey']} 
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.gradientButton}
+                  >
+                    <Text style={styles.buttonText}>Know Your Pnr Status</Text>
+                  </LinearGradient>
+                ) : (
+                  <Text style={styles.pressedButtonText}>Know Your Pnr Status</Text>
+                )}
+              </Pressable>
             </LinearGradient>
           </LinearGradient>
         </ImageBackground>
@@ -91,13 +142,15 @@ function HomeScreen({ navigation }) {
       {/* Below section for PNR details */}
       <View style={styles.detailsContainer}>
         {/* PNR Details card (implementation pending) */}
-        <View style={styles.card}>
+        {loading && <ActivityIndicator size="large" color="#8A2BE2" />}
+        {success&&(<PnrCard travel={travel} type='PnrConfirm' />)}
+        {/* <View style={styles.card}>
           <Button
             onPress={() => navigation.navigate("Notifications")}
             title="Check PNR Status"
             color="#000"
           />
-        </View>
+        </View> */}
       </View>
     </View>
     </>
@@ -164,12 +217,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginVertical:10,
-    // paddingHorizontal:6,
   },
   pressedButtonContainer: {
     borderWidth: 0,
     borderColor: '#8A2BE2',
-    // paddingHorizontal:6,
   },
   gradientButton: {
     paddingVertical: 0,
@@ -197,22 +248,4 @@ const styles = StyleSheet.create({
   },
 });
 
-function NotificationsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Button onPress={() => navigation.goBack()} title="Go back home" />
-    </View>
-  );
-}
-
-const Drawer = createDrawerNavigator();
-export default function App() {
-  return (
-    <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={HomeScreen} />
-        <Drawer.Screen name="Notifications" component={NotificationsScreen} />
-      </Drawer.Navigator>
-    </NavigationContainer>
-  );
-}
+export default Home;

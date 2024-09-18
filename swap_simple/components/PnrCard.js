@@ -3,23 +3,16 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Button } from 'react-native'; // You can use any button library you prefer
 import { LinearGradient } from 'expo-linear-gradient';
 import { HiOutlineArrowRight } from 'react-icons/hi';
-
-const  PnrCard=()=> {
-  // Hardcoded travel data
-  const travel = {
-    pnrNo: '1234567890',
-    trainInfo: {
-      name: 'Express Train',
-      trainNo: '5678',
-      boarding: 'New York',
-      destination: 'Los Angeles',
-      dt: '2024-09-20',
-    },
-    passengerInfo: [
-      { currentCoach: 'A1', currentBerthNo: '21' },
-      { currentCoach: 'A1', currentBerthNo: '22' },
-    ],
-  };
+import { useNavigation } from "@react-navigation/native";
+const  PnrCard=({travel,type})=> {
+  console.log("Inside pnr Card");
+  console.log(travel);
+  const nonConfirmedStatuses = ['WL', 'RLWL', 'RAC', 'GNWL', 'PQWL'];
+  const navigation = useNavigation();
+  // Check if any passenger has a non-confirmed status
+  const isNotConfirmed = travel.passengerInfo.some(passenger =>
+    nonConfirmedStatuses.includes(passenger.currentCoach)
+  );
 
   return (
     <ScrollView style={styles.container}>
@@ -30,7 +23,9 @@ const  PnrCard=()=> {
           colors={['#000000', '#7F00FF', '#000000']}
           style={styles.gradientBackground}
         >
-          <Text style={styles.gradientText}>Your Ticket is Confirmed</Text>
+         <Text style={styles.gradientText}>
+            {isNotConfirmed ? 'Your Ticket is Not Confirmed' : 'Your Ticket is Confirmed'}
+          </Text>
         </LinearGradient>
 
         <View style={styles.infoRow}>
@@ -65,11 +60,13 @@ const  PnrCard=()=> {
         </LinearGradient>
 
         <Button
-          title="Go For Swap"
+         title={isNotConfirmed ? 'Ticket Not Confirmed' : 'Go For Swap'}
+         color={isNotConfirmed ? '#FF0000' : '#7F00FF'} // Red color for not confirmed
+          disabled={isNotConfirmed}
           buttonStyle={styles.swapButton}
           iconRight
           icon={<HiOutlineArrowRight size={24} />}
-          onPress={() => console.log('Go For Swap')}
+          onPress={() => navigation.navigate("SeatSelection", { pnrNumber: travel.pnrNo })}
         />
       </View>
     </ScrollView>
