@@ -1,7 +1,8 @@
 import { StatusBar } from "expo-status-bar";
-import { LinearGradient } from 'expo-linear-gradient';
-import { Image, Pressable } from 'react-native';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { LinearGradient } from "expo-linear-gradient";
+import { Pressable ,Alert,ActivityIndicator} from "react-native";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import axios from "axios";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -13,23 +14,94 @@ import {
 import Fontisto from "@expo/vector-icons/Fontisto";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import LottieView from "lottie-react-native";
-import { useNavigation } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { resetError, signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
+
 const Signin = () => {
   const [isPressedSubmit, setIsPressedSubmit] = useState(false);
   const [isPressedGoogle, setIsPressedGoogle] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);  // New state
+  // const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  console.log(errorMessage);
+  // Function to show alert
+  const showErrorAlert = (message) => {
+    Alert.alert('Error', message, [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      { text: 'OK', onPress: () => console.log('OK Pressed') },
+    ]);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(resetError());
+      Toast.show({
+        type: "customToast",
+        text1: "Swap Simple",
+        text2: "Welcome Back ",
+        visibilityTime: 1000, // Hide after 1 second
+      });
+    }, [dispatch])
+  );
+
+  useEffect(() => {
+    if (errorMessage) {
+      showErrorAlert(errorMessage);
+    }
+  }, [errorMessage]);
+
+  const handleLogin = async () => {
+    const formData = {
+      email,
+      password,
+    };
+    if (!email || !password) {
+      return dispatch(signInFailure('Please fill all the fields'));
+    }
+
+    try {
+      dispatch(signInStart());
+      const res = await fetch("http://10.10.92.56:3000/api/auth/signin", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      
+      if (!res.ok || data.success === false) {
+        dispatch(signInFailure(data.message || "Login failed"));
+      } else {
+        dispatch(signInSuccess(data));
+        navigation.navigate("Home");
+      }
+    } catch (error) {
+      dispatch(signInFailure(error.message));
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <Toast position="top" topOffset={-20} />
       <View style={styles.header}>
         <View style={styles.headerTextContainer}>
-        <FontAwesome5 name="hand-holding-heart" size={40} color="#10172a" />
-          <Text style={styles.headerText}>Welcome !!  </Text>
+          <FontAwesome5 name="hand-holding-heart" size={40} color="#10172a" />
+          <Text style={styles.headerText}>Welcome !! </Text>
           <Text style={styles.headerText}>Please Sign In </Text>
         </View>
         <LottieView
-          source={require("../assets/welcome.json")} // Your animation JSON file
+          source={require("../assets/welcome.json")}
           style={styles.animation}
           autoPlay
           loop
@@ -40,12 +112,17 @@ const Signin = () => {
         style={styles.innerContainer}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
+        {/* Show loader if loading */}
+        {loading && <ActivityIndicator size="large" color="#8A2BE2" />}
+        
         <View style={styles.footer}>
           <View style={styles.inputContainer}>
             {/* Email Input */}
             <InputField
               icon={<Fontisto name="email" size={24} color="grey" />}
               placeholder="Enter your email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
             />
 
             {/* Password Input */}
@@ -53,6 +130,8 @@ const Signin = () => {
               icon={<EvilIcons name="lock" size={30} color="red" />}
               placeholder="Enter your password"
               secureTextEntry
+              value={password}
+              onChangeText={(text) => setPassword(text)}
             />
           </View>
 
@@ -60,6 +139,7 @@ const Signin = () => {
           <Pressable
             onPressIn={() => setIsPressedSubmit(true)}
             onPressOut={() => setIsPressedSubmit(false)}
+            onPress={handleLogin}
             style={[
               styles.buttonContainer,
               isPressedSubmit && styles.pressedButtonContainer,
@@ -67,7 +147,7 @@ const Signin = () => {
           >
             {!isPressedSubmit ? (
               <LinearGradient
-                colors={['#8A2BE2', '#FF1493']}
+                colors={["#8A2BE2", "#FF1493"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.gradientButton}
@@ -90,7 +170,7 @@ const Signin = () => {
           >
             {isPressedGoogle ? (
               <LinearGradient
-                colors={['#FF69B4', '#FF6347']}
+                colors={["#FF69B4", "#FF6347"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.gradientButton}
@@ -101,45 +181,51 @@ const Signin = () => {
               <Text style={styles.pressedButtonText}>Continue with Google</Text>
             )}
           </Pressable>
-        <View className="flex-row justify-between">
-        <Pressable
-          onPress={() => navigation.navigate("Signup")}
-          style={{ marginTop: 15 }}
-        >
-          <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
-            Don't have an account? Sign Up
-          </Text>
-        </Pressable>
-        </View>
-             {/* Footer with Social Icons */}
-             <View style={styles.footerIconsContainer}>
-  <Text style={styles.footerTitle}>Follow Us</Text>
-  <View style={styles.iconRow}>
-    <AntDesign name="linkedin-square" size={24} color="white" />
-    <AntDesign name="facebook-square" size={24} color="white" />
-    <AntDesign name="instagram" size={24} color="white" />
-    <AntDesign name="github" size={24} color="white" />
-  </View>
-  <Text style={styles.copyright}>
-    &copy; {new Date().getFullYear()} Sangam & Rustam
-  </Text>
-</View>
 
+          <Pressable
+            onPress={() => navigation.navigate("Signup")}
+            style={{ marginTop: 15 }}
+          >
+            <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
+              Don't have an account? Sign Up
+            </Text>
+          </Pressable>
 
+          {/* Footer with Social Icons */}
+          <View style={styles.footerIconsContainer}>
+            <Text style={styles.footerTitle}>Follow Us</Text>
+            <View style={styles.iconRow}>
+              <AntDesign name="linkedin-square" size={24} color="white" />
+              <AntDesign name="facebook-square" size={24} color="white" />
+              <AntDesign name="instagram" size={24} color="white" />
+              <AntDesign name="github" size={24} color="white" />
+            </View>
+            <Text style={styles.copyright}>
+              &copy; {new Date().getFullYear()} Sangam & Rustam
+            </Text>
+          </View>
         </View>
       </KeyboardAvoidingView>
     </View>
   );
-}
+};
 
 // Reusable Input Field component
-const InputField = ({ icon, placeholder, secureTextEntry = false }) => (
+const InputField = ({
+  icon,
+  placeholder,
+  secureTextEntry = false,
+  value,
+  onChangeText,
+}) => (
   <View style={styles.inputField}>
     {icon}
     <TextInput
       placeholder={placeholder}
       secureTextEntry={secureTextEntry}
       style={styles.textInput}
+      value={value}
+      onChangeText={onChangeText}
     />
   </View>
 );
@@ -148,17 +234,17 @@ const InputField = ({ icon, placeholder, secureTextEntry = false }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   innerContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   header: {
-    flex: 1/2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flex: 1 / 4,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 10,
     marginTop: 50,
   },
@@ -168,7 +254,7 @@ const styles = StyleSheet.create({
   headerText: {
     color: "black",
     fontSize: 20,
-    fontWeight:"bold"
+    fontWeight: "bold",
   },
   animation: {
     width: 200,
@@ -176,17 +262,16 @@ const styles = StyleSheet.create({
   },
   footer: {
     flex: 1,
-    backgroundColor: '#10172a',
+    backgroundColor: "#10172a",
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     elevation: 0,
-    shadowColor: 'red',
+    shadowColor: "red",
     shadowOpacity: 1,
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
-  
   },
   inputContainer: {
     flexDirection: "column",
@@ -212,59 +297,58 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     borderRadius: 10,
-    overflow: 'hidden',
-    marginVertical:10,
+    overflow: "hidden",
+    marginVertical: 10,
   },
   pressedButtonContainer: {
     borderWidth: 0,
-    borderColor: '#8A2BE2',
+    borderColor: "#8A2BE2",
   },
   gradientButton: {
     paddingVertical: 5,
     borderRadius: 0,
-    alignItems: 'center',
-    shadowColor: 'black',
+    alignItems: "center",
+    shadowColor: "black",
     shadowOpacity: 1,
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 10,
     elevation: 4,
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
   },
   pressedButtonText: {
     paddingVertical: 5,
     borderRadius: 10,
-    textAlign: 'center',
-    color: '#8A2BE2',
+    textAlign: "center",
+    color: "#8A2BE2",
     fontSize: 18,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   footerIconsContainer: {
-    position: 'absolute',  
-    bottom: 0,            
-    width: '100%',        
-    backgroundColor: '#10172a',  
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    backgroundColor: "#10172a",
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
   footerTitle: {
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
-    color: 'white',
+    color: "white",
   },
   iconRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginVertical: 10,
   },
   copyright: {
-    color: 'white',
-    textAlign: 'center',
+    color: "white",
+    textAlign: "center",
   },
 });
 
-export default Signin
-
+export default Signin;

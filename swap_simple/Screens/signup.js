@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from 'expo-linear-gradient';
-import { Image, Pressable } from 'react-native';
+import { Image, Pressable,ActivityIndicator, Alert } from 'react-native';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import {
   KeyboardAvoidingView,
@@ -10,18 +10,99 @@ import {
   View,
   StyleSheet,
 } from "react-native";
+import Toast from "react-native-toast-message";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import LottieView from "lottie-react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { resetError } from "../redux/user/userSlice";
 const Signup = () => {
   const [isPressedSubmit, setIsPressedSubmit] = useState(false);
   const [isPressedGoogle, setIsPressedGoogle] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  console.log(errorMessage);
+  // Function to show alert
+  const showErrorAlert = (message) => {
+    Alert.alert('Error', message, [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      { text: 'OK', onPress: () => console.log('OK Pressed') },
+    ]);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(resetError());
+      Toast.show({
+        type: "customToast",
+        text1: "Swap Simple",
+        text2: "Welcome Back ",
+        visibilityTime: 1000, // Hide after 1 second
+      });
+    }, [dispatch])
+  );
+
+  useEffect(() => {
+    if (errorMessage) {
+      showErrorAlert(errorMessage);
+    }
+  }, [errorMessage]);
+  
+  const handleSignup=async()=>{
+    console.log("Hii i am pressed");
+    const formData = {
+      email,
+      password,
+      username
+    };
+    console.log(email);
+    console.log(password);
+    console.log(username);
+    if (!email || !password||!username) {
+      return setErrorMessage("Please fill out all fields.");
+    }
+    console.log(formData);
+    try {
+      setLoading(true);
+      setErrorMessage(null);
+      // dispatch(signInStart());
+      const res = await fetch("http://10.10.92.56:3000/api/auth/signup", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      
+      if (!res.ok || data.success === false) {
+        setLoading(false);
+        return setErrorMessage(data.message);
+      } else {
+        // dispatch(signInSuccess(data));
+        navigation.navigate("Login");
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
+      setLoading(false);
+    }
+
+  };
+
   return (
     <View style={styles.container}>
+        <Toast position="top" topOffset={-20} />
       <View style={styles.header}>
         <View style={styles.headerTextContainer}>
         <FontAwesome5 name="hand-holding-heart" size={40} color="#10172a" />
@@ -40,16 +121,21 @@ const Signup = () => {
         style={styles.innerContainer}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
+          {loading && <ActivityIndicator size="large" color="#8A2BE2" />}
         <View style={styles.footer}>
           <View style={styles.inputContainer}>
           <InputField
                 icon={<AntDesign name="user" size={24} color="grey" />}
                 placeholder="Enter your name"
+                value={username}
+                onChangeText={(text) => setUsername(text)}
               />
             {/* Email Input */}
             <InputField
               icon={<Fontisto name="email" size={24} color="grey" />}
               placeholder="Enter your email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
             />
 
             {/* Password Input */}
@@ -57,6 +143,8 @@ const Signup = () => {
               icon={<EvilIcons name="lock" size={30} color="red" />}
               placeholder="Enter your password"
               secureTextEntry
+              value={password}
+              onChangeText={(text) => setPassword(text)}
             />
           </View>
 
@@ -64,6 +152,7 @@ const Signup = () => {
           <Pressable
             onPressIn={() => setIsPressedSubmit(true)}
             onPressOut={() => setIsPressedSubmit(false)}
+            onPress={handleSignup}
             style={[
               styles.buttonContainer,
               isPressedSubmit && styles.pressedButtonContainer,
@@ -76,10 +165,10 @@ const Signup = () => {
                 end={{ x: 1, y: 1 }}
                 style={styles.gradientButton}
               >
-                <Text style={styles.buttonText}>Submit</Text>
+                <Text style={styles.buttonText}>SignUp</Text>
               </LinearGradient>
             ) : (
-              <Text style={styles.pressedButtonText}>Submit</Text>
+              <Text style={styles.pressedButtonText}>SignUp</Text>
             )}
           </Pressable>
 
@@ -107,7 +196,7 @@ const Signup = () => {
           </Pressable>
         <View className="flex-row justify-between">
         <Pressable
-          onPress={() => navigation.goBack()}
+         onPress={() => navigation.navigate("Login")}
           style={{ marginTop: 15 }}
         >
           <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
@@ -136,14 +225,21 @@ const Signup = () => {
   );
 }
 
-// Reusable Input Field component
-const InputField = ({ icon, placeholder, secureTextEntry = false }) => (
+const InputField = ({
+  icon,
+  placeholder,
+  secureTextEntry = false,
+  value,
+  onChangeText,
+}) => (
   <View style={styles.inputField}>
     {icon}
     <TextInput
       placeholder={placeholder}
       secureTextEntry={secureTextEntry}
       style={styles.textInput}
+      value={value}
+      onChangeText={onChangeText}
     />
   </View>
 );
@@ -159,7 +255,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   header: {
-    flex: 1/2,
+    flex: 1/4,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

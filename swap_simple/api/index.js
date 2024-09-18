@@ -9,12 +9,22 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 // import { , ,  } from './serverController.js';
 import { restartServer } from './controllers/ServerController.js';
+import cors from "cors";
+import bodyParser from 'body-parser';
+
 
 dotenv.config();
 // stopServer
 const __dirname = path.resolve();
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+    origin: '*', 
+    credentials: true,
+}));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 // app.use(express.static(path.join(__dirname,'/client/dist')))
 app.use(cookieParser());
 const url = process.env.MONGO;
@@ -31,12 +41,11 @@ mongoose.connect(url, {
     });
 
     const server = app.listen(3000, () => {
-        console.log("App is listening on port 3000");
+        console.log("App is listening on hi port 3000");
     });
     
-app.use(express.json());
+// app.use(express.json());
 app.use(cookieParser());
-
 app.get("/",(req,res)=>{
     console.log("charlie --- ");
     res.send("hii i am charlie");
@@ -48,6 +57,7 @@ app.use("/api/req", requestRoute);
 app.post("/api/restart-server", restartServer);
 
 app.get('*', (req, res) => {
+    console.log("HUJBJDB");
     res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
   });
 

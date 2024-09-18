@@ -1,3 +1,4 @@
+
 import User from "../models/userModel.js";
 import bcryptjs from "bcryptjs";
 
@@ -5,6 +6,7 @@ import { errorHandler } from "./../utilis/error.js";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
+  console.log("Rustam Signup");
   const { username, email, password } = req.body;
 
   if (
@@ -35,6 +37,7 @@ export const signup = async (req, res, next) => {
 };
 
 export const signin = async (req, res, next) => {
+  console.log("Hey i am here for you ");
   const { email, password } = req.body;
   if (!email || !password || email === "" || password === "") {
     next(errorHandler(400, "All fields are required"));
