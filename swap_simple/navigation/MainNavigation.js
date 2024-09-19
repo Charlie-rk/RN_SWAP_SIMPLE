@@ -9,12 +9,14 @@ import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Home from '../Screens/Home';
+
 import Signin from '../Screens/sigin';
 import Signup from '../Screens/signup';
 import toastConfig from '../toastConfig';
 import SeatSelection from '../components/SeatSelection';
 import SwapResults from '../Screens/SwapResults';
 import All_request from '../Screens/All_request';
+
 
 const darkTheme = {
   backgroundColor: '#1e293b',
@@ -89,6 +91,7 @@ function AllRequestsScreen() {
     <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: "#1e293b"}}>
       {/* <Text style={{ color: darkTheme.textColor }}>All Requests Screen</Text> */}
       <All_request/>
+
     </View>
   );
 }
@@ -122,7 +125,9 @@ function HomeStackScreen() {
     >
       <HomeStack.Screen name="HomeStackMain" component={HomeScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="SeatSelection" component={SeatSelectionScreen} options={{ headerShown: false }} />
+
       <HomeStack.Screen name="SwapResults" component={SwapResultsScreen} options={{ headerShown: false }} />
+
     </HomeStack.Navigator>
   );
 }
