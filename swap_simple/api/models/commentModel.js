@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import mongoose from "mongoose";
 
 const commentSchema=new mongoose.Schema({
@@ -26,33 +25,4 @@ const commentSchema=new mongoose.Schema({
 );
 
 const Comment=mongoose.model('Comment',commentSchema);
-=======
-import mongoose from "mongoose";
-
-const commentSchema=new mongoose.Schema({
-   content:{
-    type:String,
-    required:true,
-   },
-   postId:{
-    type:String,
-    required:true,
-   },
-   userid:{
-    type:String,
-    required:true,
-   },
-   likes:{
-    type:Array,
-    default:[],
-   },
-   numberOfLikes:{
-    type:Number,
-    default:0,
-   },
-},{timestamps:true}
-);
-
-const Comment=mongoose.model('Comment',commentSchema);
->>>>>>> main
 export default Comment;

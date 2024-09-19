@@ -27,7 +27,7 @@ const Home=()=>{
   const [travel, setTravel] = useState({});
   const [loading, setLoading] = useState(false);
   const pnrCardRef = useRef();
-   
+  //  console.log(currentUser);
   const dispatch=useDispatch();
 
 //   const scrollUp=()=>{
@@ -123,7 +123,7 @@ const Home=()=>{
               >
                 {!pressed ? (
                   <LinearGradient
-                    colors={['grey', 'rgba(0,0,0,0.6)', 'grey']} 
+                    colors={['grey', 'grey', 'grey']} 
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={styles.gradientButton}
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderColor: "#374151",
-    backgroundColor: "#374151",
+    backgroundColor: "#e6e6e6",
     borderWidth: 1,
     width: "100%",
     padding: 10,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
     height: 50,
-    color:"white",
+    color:"black",
   },
   detailsContainer: {
     flex: 1,
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonContainer: {
-    borderRadius: 10,
+    borderRadius: 4,
     overflow: 'hidden',
     marginVertical:10,
   },

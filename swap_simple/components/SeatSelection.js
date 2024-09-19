@@ -16,6 +16,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import Entypo from '@expo/vector-icons/Entypo';
 // import { , Text } from 'react-native';
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -59,11 +60,11 @@ const SeatSelection = () => {
       const response = await res.json();
           console.log(response);
           if (response.success) {
-            console.log("Succedd");
-            // navigation.navigate('SwapResults', { pnrNumber, results1: response.partiallySwaps, result2: response.perfectSwaps });
+            console.log("Succed");
+             navigation.navigate('SwapResults', { pnrNumber, result1: response.partiallySwaps, result2: response.perfectSwaps });
           } else {
             console.log("failed");
-            // navigation.navigate('SwapResults', { pnrNumber, results1: null, result2: null });
+             navigation.navigate('SwapResults', { pnrNumber, results1: null, result2: null });
           }
 
     }catch(error){
@@ -157,7 +158,7 @@ const SeatSelection = () => {
                 <LinearGradient
                   // Gradient colors
                   activeOpacity={1}
-                  colors={["grey", "blue","grey"]}
+                  colors={["grey", "grey","grey","#e6e6e6"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.gradientButton}
@@ -197,12 +198,16 @@ const SeatSelection = () => {
           <TouchableOpacity onPress={handleAddCoachBtnClick}>
             <LinearGradient
               // Gradient colors
-              colors={["grey","blue", "black","blue","black","blue","grey"]}
+              colors={["#3B82F6","#3B82F6", "#3B82F6","#3B82F9","#60A5FA","#60A5FA","#60A5FA"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.gradientButton1}
-            >
-              <Text style={styles.buttonText}>Add Coach and Seats</Text>
+            > 
+            <View  style={{ flexDirection: "row", alignItems: "center" }} >
+            <Entypo name="add-to-list" size={24} color="white" />
+            <Text style={[styles.buttonText, { marginLeft: 10 ,marginRight:10}]}>Add Coach and Seats</Text>
+            </View>
+            
             </LinearGradient>
           </TouchableOpacity>
           </View>
@@ -270,7 +275,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFFFFF", // White text
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 14,
   },
 
   input: {
