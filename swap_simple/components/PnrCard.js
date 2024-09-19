@@ -20,7 +20,9 @@ const  PnrCard=({travel,type})=> {
         <Text style={styles.headerText}>PNR : {travel.pnrNo}</Text>
 
         <LinearGradient
-          colors={['#000000', '#7F00FF', '#000000']}
+
+          colors={['grey', 'grey', 'grey',"#404040"]}
+
           style={styles.gradientBackground}
         >
          <Text style={styles.gradientText}>
@@ -47,7 +49,9 @@ const  PnrCard=({travel,type})=> {
         </View>
 
         <LinearGradient
-          colors={['blue', 'black', 'darkblue']}
+
+          colors={['grey', 'grey', 'grey',"#404040"]}
+
           style={styles.passengerInfoContainer}
         >
           <Text style={styles.passengerHeader}>Passenger Info:</Text>
@@ -61,7 +65,9 @@ const  PnrCard=({travel,type})=> {
 
         <Button
          title={isNotConfirmed ? 'Ticket Not Confirmed' : 'Go For Swap'}
-         color={isNotConfirmed ? '#FF0000' : '#7F00FF'} // Red color for not confirmed
+
+         color={isNotConfirmed ? '#ff5c33' : '#4d79ff'} // Red color for not confirmed
+
           disabled={isNotConfirmed}
           buttonStyle={styles.swapButton}
           iconRight
