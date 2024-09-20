@@ -65,6 +65,7 @@ const  PnrCard=({travel,type})=> {
             </Text>
           ))}
         </LinearGradient>
+<<<<<<< Updated upstream
 
         <Button
          title={isNotConfirmed ? 'Ticket Not Confirmed' : 'Go For Swap'}
@@ -77,6 +78,14 @@ const  PnrCard=({travel,type})=> {
           icon={<HiOutlineArrowRight size={24} />}
           onPress={() => navigation.navigate("SeatSelection", { pnrNumber: travel.pnrNo })}
         />
+=======
+        <GradientButton
+        onPress={() => navigation.navigate("SeatSelection", { pnrNumber: travel.pnrNo })}
+        icon={<Ionicons name="arrow-forward-circle" size={24} color="white" />}
+        text='Go For Swap'
+        isNotConfirmed={isNotConfirmed} // Pass the isNotConfirmed prop
+      />
+>>>>>>> Stashed changes
       </View>
     </ScrollView>
   );
