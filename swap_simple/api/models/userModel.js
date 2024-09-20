@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  ExpoToken:{
+    type: String, 
+    default: null
+  },
   notifications: [
     {
       message: {

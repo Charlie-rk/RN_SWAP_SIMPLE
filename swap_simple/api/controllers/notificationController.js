@@ -5,6 +5,7 @@ import User from "../models/userModel.js";
 import nodemailer from "nodemailer";
 import Swap from "../models/swapModel.js";
 import Travel from "../models/travelModel.js";
+import { sendExpoNotification } from "./expoNotification.js";
 
 import 'dotenv/config';
 import Request from "../models/requestModel.js";
@@ -312,8 +313,16 @@ export const sendNotification = async ({ user1, user2, message1, message2, subje
     };
     await sendMail(emailOptions1);
     await sendMail(emailOptions2);
-
     console.log("Notifications sent successfully");
+    
+    const pushToken1=user1.ExpoToken;
+    const pushToken2=user2.ExpoToken;
+
+    if (pushToken1)
+      sendExpoNotification(pushToken1, subject1);
+    if (pushToken2)
+      sendExpoNotification(pushToken2, subject2);
+    
   } catch (error) {
     console.error("Error sending Notification", error);
     // Logging and returning instead of throwing error
@@ -468,6 +477,15 @@ export const sendNotification2 = async ({ user1, user2, message1, message2, subj
 
     await sendMail(emailOptions1);
     await sendMail(emailOptions2);
+
+
+    const pushToken1=user1.ExpoToken;
+    const pushToken2=user2.ExpoToken;
+
+    if (pushToken1)
+      sendExpoNotification(pushToken1, subject1);
+    if (pushToken2)
+      sendExpoNotification(pushToken2, subject2);
 
 
     console.log("Notifications sent successfully");
@@ -777,9 +795,16 @@ export const sendNotification_Rejection = async ({ user1, user2, message1, messa
 
     await sendMail(emailOptions1);
     await sendMail(emailOptions2);
-
-
     console.log("Notifications sent successfully");
+
+    const pushToken1=user1.ExpoToken;
+    const pushToken2=user2.ExpoToken;
+
+    if (pushToken1)
+      sendExpoNotification(pushToken1, subject1);
+    if (pushToken2)
+      sendExpoNotification(pushToken2, subject2);
+
   } catch (error) {
     console.error("Error sending Notification", error);
     // Logging and returning instead of throwing error
@@ -1038,6 +1063,15 @@ export const sendNotification_Confirm = async ({ user1, user2, message1, message
 
 
     console.log("Notifications sent successfully");
+
+    const pushToken1=user1.ExpoToken;
+    const pushToken2=user2.ExpoToken;
+
+    if (pushToken1)
+      sendExpoNotification(pushToken1, subject1);
+    if (pushToken2)
+      sendExpoNotification(pushToken2, subject2);
+    
   } catch (error) {
     console.error("Error sending Notification", error);
     // Logging and returning instead of throwing error
@@ -1071,7 +1105,8 @@ export const confirmSwapSeat = async (req, res) => {
     console.log("HII4");
     if (!(swap.isConfirmedByUser1 && swap.isConfirmedByUser2)) {
       console.log("ytu");
-      return res.status(400).json({ message: "Swap not confirmed by both users" });
+      return res.status(200).json({ message: "Swap not confirmed by both users" });
+      // return res.status(400).json({ message: "Swap not confirmed by both users" });
     }
     console.log("HII5");
     const travel1 = await Travel.findByIdAndDelete(ownTravelId).populate('user');

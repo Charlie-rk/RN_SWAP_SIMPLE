@@ -37,11 +37,11 @@ router.get("/:pnrNumber", async (req, res) => {
 
   const user=await User.findById(userId);
    console.log(user);
-  const travel = await Travel.findOne({ pnrNo: pnrNumber });
-  if (travel) {
-    console.log(travel);
-    return res.status(201).json({ success: true, message: "Succesful", travel });
-  }
+  // const travel = await Travel.findOne({ pnrNo: pnrNumber });
+  // if (travel) {
+  //   console.log(travel);
+  //   return res.status(201).json({ success: true, message: "Succesful", travel });
+  // }
 
   console.log("---", pnrNumber);
 

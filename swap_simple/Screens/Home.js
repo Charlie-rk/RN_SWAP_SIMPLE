@@ -112,6 +112,7 @@ const Home=()=>{
                 value={pnr}
                 onChangeText={(text)=>setPnr(text)}
               />
+<<<<<<< Updated upstream
              <Pressable
                 onPressIn={() => setPressed(true)}
                 onPressOut={() => setPressed(false)}
@@ -137,6 +138,35 @@ const Home=()=>{
                   <Text style={styles.pressedButtonText}>Know Your Pnr Status</Text>
                 )}
               </Pressable>
+=======
+                <Pressable
+                  onPressIn={() => setPressed(true)}
+                  onPressOut={() => setPressed(false)}
+                  onPress={currentUser ? handleSubmit : null}
+                  style={[
+                    styles.buttonContainer,
+                    pressed && styles.pressedButtonContainer,
+                    { opacity: currentUser ? 1 : 0.5 } // Change opacity based on user state
+                  ]}
+                >
+                  {!pressed ? (
+                    <LinearGradient
+                      colors={['grey', 'grey', 'grey']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.gradientButton}
+                    >
+                      <Text style={styles.buttonText}>
+                        {currentUser ? "Know Your PNR Status" : "Please log in"}
+                      </Text>
+                    </LinearGradient>
+                  ) : (
+                    <Text style={styles.pressedButtonText}>
+                      {currentUser ? "Know Your PNR Status" : "Please log in"}
+                    </Text>
+                  )}
+                </Pressable>
+>>>>>>> Stashed changes
             </LinearGradient>
           </LinearGradient>
         </ImageBackground>

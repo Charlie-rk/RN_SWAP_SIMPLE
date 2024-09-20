@@ -13,17 +13,27 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "This app requires access to your photo library to upload images."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "resizeMode": "cover", 
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": ["CAMERA", "CAMERA_ROLL"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "16e43c89-2974-4755-8cb6-a208146412aa"
+      }
+    },
+    "scheme": "exp"  
   }
 }

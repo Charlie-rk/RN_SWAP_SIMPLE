@@ -32,6 +32,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default {
-  customToast,
-};
+export default customToast;

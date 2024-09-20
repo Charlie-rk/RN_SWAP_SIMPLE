@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,14 +11,16 @@ import {
   TouchableOpacity,
   FlatList,
   Platform,
+  RefreshControl,
 } from "react-native";
 import { useSelector } from "react-redux";
 // import { Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const All_request = () => {
   const [request, setRequest] = useState([]);
@@ -35,25 +37,47 @@ const All_request = () => {
   const navigation = useNavigation();
   const [openDatePicker, setOpenDatePicker] = useState(false); // control the date picker modal
   const [selectedDate, setSelectedDate] = useState(new Date()); // default date as today's date
+  const [refreshing, setRefreshing] = useState(false); // Add refreshing state
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await fetch(
-          `http://10.10.92.56:3000/api/req/${currentUser._id}/allReq`
-        );
-        if (res.ok) {
-          const data = await res.json();
-          setRequest(data.requests);
-          setFilteredRequest(data.requests);
-        }
-      } catch (error) {
-        console.log("Error:", error.message);
+    // Fetch data function (can be called on pull-to-refresh or page load)
+  const fetchData = async () => {
+    if (!currentUser) {
+      console.log("If then why so ");
+      navigation.navigate('Home'); // Navigate to HomeScreen if no currentUser
+      return; // Exit function early to avoid fetching notifications
+    }
+
+    try {
+      const res = await fetch(
+        `http://10.10.92.56:3000/api/req/${currentUser._id}/allReq`
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setRequest(data.requests);
+        setFilteredRequest(data.requests);
       }
-    };
-    getData();
-  }, [currentUser, requestDeleted]);
+    } catch (error) {
+      console.log("Error:", error.message);
+    } finally {
+      setRefreshing(false); // Stop the refresh spinner
+    }
+  };
+  
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [currentUser])
+  );
+  useEffect(() => {
+    fetchData();
+  }, [currentUser, requestDeleted,navigation]);
    
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true); // Show the refresh control spinner
+    fetchData(); // Re-fetch data on pull-to-refresh
+  }, [currentUser]);
+
   console.log(openDatePicker);
     const toogleDatePicker=()=>{
        
@@ -129,15 +153,19 @@ const All_request = () => {
     <View style={styles.container}>
       {request.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyEmoji}>😭</Text>
-          <Text style={styles.emptyText}>😒 No Request found. 😢</Text>
+          {/* <Text style={styles.emptyEmoji}>😭</Text> */}
+          <MaterialCommunityIcons name="crosshairs-question" size={100} color="white" />
+          <Text style={styles.emptyText}> No Request found. </Text>
           <Text style={styles.emptyText}>
-            😊 Please wait for SOMEONE FOR THE REQUEST. 😊
+             Please wait for SOMEONE FOR THE REQUEST. 😊
           </Text>
           <Text style={styles.emptyText}>Thank you for your patience! </Text>
         </View>
       ) : (
-        <ScrollView>
+
+        <ScrollView refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
           <LinearGradient
             colors={["grey", "#1e293b", "grey"]}
             style={styles.header}
@@ -199,7 +227,7 @@ const All_request = () => {
       </TouchableOpacity>
       <TouchableOpacity onPress={resetFilters} style={styles.buttonFlex}>
         <LinearGradient
-          colors={["grey", "#ed736b"]}
+          colors={["grey", "grey"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradientButton2}
@@ -258,12 +286,13 @@ const All_request = () => {
                 </Text>
 
                 {/* Buttons for "See Preferences" and "Delete Request" */}
+                <View style={{flexDirection:'row'}}>
                 <View style={styles.swapButtonContainer1}>
                   <TouchableOpacity
                     onPress={() => handleOpenModal(item.preferences)}
                   >
                     <LinearGradient
-                      colors={["#3B82F6", "#60A5FA", "grey"]}
+                      colors={["#3B82F6", "#60A5FA", "#60A5FA"]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={styles.gradientButton2}
@@ -271,9 +300,9 @@ const All_request = () => {
                       <Text style={styles.buttonText}>See Preferences</Text>
                     </LinearGradient>
                   </TouchableOpacity>
-                </View>
+                  </View>
 
-                {item.user.username === currentUser.username && (
+                {item.user && item.user.username === currentUser?.username&& (
                   <View style={styles.swapButtonContainer1}>
                     <TouchableOpacity
                       onPress={() => {
@@ -282,7 +311,7 @@ const All_request = () => {
                       }}
                     >
                       <LinearGradient
-                        colors={["grey", "#a33957", "#a33957"]}
+                        colors={["#a33957", "#a33957", "#a33957"]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         style={styles.gradientButton2}
@@ -294,26 +323,11 @@ const All_request = () => {
                     </TouchableOpacity>
                   </View>
                 )}
+                </View>
               </ScrollView>
             )}
           />
-          {/* <DatePicker
-            modal
-            openPicker={openDatePicker}
-            date={selectedDate}
-            mode="date"
-            onConfirm={(date) => {
-              setOpenDatePicker(false);
-              setSelectedDate(date);
-              setFormData({
-                ...formData,
-                dt: date.toISOString().split("T")[0],
-              });
-            }}
-            onCancel={() => {
-              setOpenDatePicker(false);
-            }}
-          /> */}
+         
 
           {/* Preferences Modal */}
           <Modal
@@ -349,7 +363,9 @@ const All_request = () => {
                   <Text style={styles.buttonText}>Close</Text>
                 </TouchableOpacity>
               </View>
+              
             </View>
+            
           </Modal>
 
           {/* Delete Confirmation Modal */}
@@ -409,6 +425,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 5,
     fontFamily: "sans-serif",
+    color:'white',
   },
   header: {
     paddingVertical: 4,
@@ -464,7 +481,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonText: {
-    color: "#fff",
+    color: "white",
   },
   requestItem: {
     padding: 10,
@@ -478,6 +495,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
+    // alignItems:''
   },
   modalContent: {
     backgroundColor: "#fff",
