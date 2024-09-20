@@ -16,10 +16,13 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { useState, useCallback, useEffect } from "react";
 import LottieView from "lottie-react-native";
-import Toast from "react-native-toast-message";
+// import Toast from "react-native-toast-message";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { resetError, signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
+import OAuth from "../components/OAuth";
+import { registerForPushNotificationsAsync } from "../Services/NotificationToken";
+
 
 const Signin = () => {
   const [isPressedSubmit, setIsPressedSubmit] = useState(false);
@@ -44,17 +47,17 @@ const Signin = () => {
     ]);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      dispatch(resetError());
-      Toast.show({
-        type: "customToast",
-        text1: "Swap Simple",
-        text2: "Welcome Back ",
-        visibilityTime: 1000, // Hide after 1 second
-      });
-    }, [dispatch])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     dispatch(resetError());
+  //     Toast.show({
+  //       type: "customToast",
+  //       text1: "Swap Simple",
+  //       text2: "Welcome Back ",
+  //       visibilityTime: 1000, // Hide after 1 second
+  //     });
+  //   }, [dispatch])
+  // );
 
   useEffect(() => {
     if (errorMessage) {
@@ -79,6 +82,8 @@ const Signin = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
+
+      const userId=data._id;
       
       if (!res.ok || data.success === false) {
         dispatch(signInFailure(data.message || "Login failed"));
@@ -86,6 +91,8 @@ const Signin = () => {
         dispatch(signInSuccess(data));
         navigation.navigate("Home");
       }
+      const token=registerForPushNotificationsAsync(userId);
+      console.log(token);
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
@@ -93,7 +100,7 @@ const Signin = () => {
 
   return (
     <View style={styles.container}>
-      <Toast position="top" topOffset={-20} />
+      {/* <Toast position="top" topOffset={-20} /> */}
       <View style={styles.header}>
         <View style={styles.headerTextContainer}>
           <FontAwesome5 name="hand-holding-heart" size={40} color="#10172a" />
@@ -160,28 +167,8 @@ const Signin = () => {
           </Pressable>
 
           {/* Continue with Google Button */}
-          <Pressable
-            onPressIn={() => setIsPressedGoogle(true)}
-            onPressOut={() => setIsPressedGoogle(false)}
-            style={[
-              styles.buttonContainer,
-              isPressedGoogle && styles.pressedButtonContainer,
-            ]}
-          >
-            {isPressedGoogle ? (
-              <LinearGradient
-                colors={["#FF69B4", "#FF6347"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.gradientButton}
-              >
-                <Text style={styles.buttonText}>Continue with Google</Text>
-              </LinearGradient>
-            ) : (
-              <Text style={styles.pressedButtonText}>Continue with Google</Text>
-            )}
-          </Pressable>
-
+          <OAuth/>
+        
           <Pressable
             onPress={() => navigation.navigate("Signup")}
             style={{ marginTop: 15 }}

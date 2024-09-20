@@ -55,6 +55,46 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
+
+
+
+
+export const updateExpoToken = async (req, res) => {
+  try {
+    console.log("HI");
+    // Extract the user ID from the route parameters
+    const {userId} = req.params;
+    console.log(userId);
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    // Check if the user was found
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the Expo token
+    user.ExpoToken = req.body.ExpoToken;
+
+    // Save the updated user
+    await user.save();
+
+    // Send a success response
+    res.status(200).json({ message: 'Expo token updated successfully' });
+  } catch (error) {
+    // Handle errors
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
+
+
+
+
 export const deleteUser = async (req, res, next) => {
   if (!req.user.isAdmin && req.user.id !== req.params.userId) {
     return next(errorHandler(403, 'You are not allowed to delete this user'));

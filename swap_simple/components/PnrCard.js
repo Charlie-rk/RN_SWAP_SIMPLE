@@ -2,12 +2,15 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Button } from 'react-native'; // You can use any button library you prefer
 import { LinearGradient } from 'expo-linear-gradient';
-import { HiOutlineArrowRight } from 'react-icons/hi';
+// import { HiOutlineArrowRight } from 'react-icons/hi';
 import { useNavigation } from "@react-navigation/native";
+import Ionicons from '@expo/vector-icons/Ionicons';
+import GradientButton from './GradientButton';
 const  PnrCard=({travel,type})=> {
   console.log("Inside pnr Card");
   console.log(travel);
-  const nonConfirmedStatuses = ['WL', 'RLWL', 'RAC', 'GNWL', 'PQWL'];
+  const nonConfirmedStatuses = ['RAC', 'GNWL', 'PQWL'];
+  // const nonConfirmedStatuses = ['WL', 'RLWL', 'RAC', 'GNWL', 'PQWL'];
   const navigation = useNavigation();
   // Check if any passenger has a non-confirmed status
   const isNotConfirmed = travel.passengerInfo.some(passenger =>
@@ -62,6 +65,7 @@ const  PnrCard=({travel,type})=> {
             </Text>
           ))}
         </LinearGradient>
+<<<<<<< Updated upstream
 
         <Button
          title={isNotConfirmed ? 'Ticket Not Confirmed' : 'Go For Swap'}
@@ -74,6 +78,14 @@ const  PnrCard=({travel,type})=> {
           icon={<HiOutlineArrowRight size={24} />}
           onPress={() => navigation.navigate("SeatSelection", { pnrNumber: travel.pnrNo })}
         />
+=======
+        <GradientButton
+        onPress={() => navigation.navigate("SeatSelection", { pnrNumber: travel.pnrNo })}
+        icon={<Ionicons name="arrow-forward-circle" size={24} color="white" />}
+        text='Go For Swap'
+        isNotConfirmed={isNotConfirmed} // Pass the isNotConfirmed prop
+      />
+>>>>>>> Stashed changes
       </View>
     </ScrollView>
   );

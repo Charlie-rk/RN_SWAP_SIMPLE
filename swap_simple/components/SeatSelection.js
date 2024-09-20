@@ -19,6 +19,11 @@ import { useSelector } from "react-redux";
 
 import Entypo from '@expo/vector-icons/Entypo';
 
+import GradientButton from "./GradientButton";
+// import { , Text } from 'react-native';
+
+
+
 
 const { width: screenWidth } = Dimensions.get("window");
 const animationHeight = screenWidth * (250 / 375);
@@ -163,7 +168,9 @@ const SeatSelection = () => {
                   // Gradient colors
                   activeOpacity={1}
 
+
                   colors={["grey", "grey","grey","#e6e6e6"]}
+
 
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -173,34 +180,34 @@ const SeatSelection = () => {
                 </LinearGradient>
               </TouchableOpacity>
               <ScrollView horizontal={true}>
-                <FlatList
-                  data={[...Array(100).keys()]}
-                  numColumns={10}
-                  renderItem={({ item }) => {
-                    const seatNumber = ("0" + (item + 1)).slice(-2);
-                    return (
-                      <TouchableOpacity
-                        style={[
-                          styles.seatCheckbox,
-                          selectedSeats.includes(seatNumber) &&
-                            styles.selectedSeat,
-                        ]}
-                        onPress={() => handleSeatCheckboxChange(seatNumber)}
-                      >
-                        <Text style={styles.seatText}>Seat {seatNumber}</Text>
-                      </TouchableOpacity>
-                    );
-                  }}
-                  keyExtractor={(item) => item.toString()}
-                />
-              </ScrollView>
+  <View style={styles.gridContainer}>
+    {[...Array(10).keys()].map((row) => (
+      <View style={styles.rowContainer} key={row}>
+        {[...Array(10).keys()].map((col) => {
+          const seatNumber = ("0" + (row * 10 + col + 1)).slice(-2);
+          return (
+            <TouchableOpacity
+              key={seatNumber}
+              style={[
+                styles.seatCheckbox,
+                selectedSeats.includes(seatNumber) && styles.selectedSeat,
+              ]}
+              onPress={() => handleSeatCheckboxChange(seatNumber)}
+            >
+              <Text style={styles.seatText}>Seat {seatNumber}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    ))}
+  </View>
+</ScrollView>
             </>
           )}
 
           {/* <Button title="Add Coach and Seats" onPress={handleAddCoachBtnClick} color="#1e293b"  /> */}
         
         <View  style={styles.AddCoach}>
-
           <TouchableOpacity onPress={handleAddCoachBtnClick}>
             <LinearGradient
               // Gradient colors
@@ -212,7 +219,9 @@ const SeatSelection = () => {
             > 
             <View  style={{ flexDirection: "row", alignItems: "center" }} >
             <Entypo name="add-to-list" size={24} color="white" />
-            <Text style={[styles.buttonText, { marginLeft: 10 ,marginRight:10}]}>Add Coach and Seats</Text>
+
+            <Text style={[styles.buttonText, { marginLeft: 10 ,marginRight:0}]}>Add Coach and Seats</Text>
+
             </View>
             
 
@@ -269,13 +278,21 @@ const styles = StyleSheet.create({
     marginTop: -50,
   },
   gradientButton: {
-    padding: 15,
+    padding: 1,
     borderRadius: 0,
     alignItems: "center",
     marginVertical: 10,
   },
   gradientButton1: {
-    padding: 15,
+    padding: 10,
+    paddingHorizontal:15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  gradientButton2: {
+    padding: 1,
+    paddingHorizontal:15,
     borderRadius: 10,
     alignItems: "center",
     marginVertical: 10,
@@ -354,7 +371,7 @@ const styles = StyleSheet.create({
     color: "#F9FAFB", // Light text for seat numbers
   },
   swapButtonContainer: {
-    marginTop: 30,
+    marginTop: 3,
     alignItems: "center",
     border: 2,
     borderRadius: 4,
@@ -366,11 +383,31 @@ const styles = StyleSheet.create({
   },
   AddCoach:{
     // marginTop: 30,
-    paddingHorizontal:30,
+    paddingHorizontal:60,
     alignItems: "",
     border: 2,
     borderRadius: 4,
-  }
+  },
+   gridContainer: {
+    flexDirection: "row",
+  },
+  rowContainer: {
+    flexDirection: "column",
+  },
+  seatCheckbox: {
+    borderWidth: 1,
+    borderColor: "#9CA3AF",
+    padding: 10,
+    margin: 5,
+    borderRadius: 5,
+    backgroundColor: "#374151",
+  },
+  selectedSeat: {
+    backgroundColor: "#801a00",
+  },
+  seatText: {
+    color: "#F9FAFB", // Light text for seat numbers
+  },
   
 });
 

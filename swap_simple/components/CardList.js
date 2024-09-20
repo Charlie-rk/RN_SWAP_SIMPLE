@@ -6,23 +6,94 @@ import {
   Image,
   TouchableOpacity,
   Modal,
-  Button,
+
   StyleSheet,
   Dimensions,
-  ViewBase,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
-import Entypo from '@expo/vector-icons/Entypo';
+import Entypo from "@expo/vector-icons/Entypo";
 import { useSelector } from "react-redux";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { useNavigation } from "@react-navigation/native";
+
 const CardList = ({ travel, pnr }) => {
-  console.log(travel);
+  const [loading, setLoading] = useState(false);
+
   const [showModal, setShowModal] = useState(false);
   const [swapModal, setSwapModal] = useState(false);
   const { travel__Id } = useSelector((state) => state.user);
   const { currentUser } = useSelector((state) => state.user);
+
+  const travelId = travel._id;
+  const navigation = useNavigation();
+
+  const confirm = async () => {
+    setShowModal(false);
+    setSwapModal(false);
+    setLoading(true);
+    try {
+      const res = await fetch(`http://10.10.92.56:3000/api/pnr/swapRequestNotification`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          requesterTravelId: travel__Id,
+          accepterTravelId: travelId,
+        }),
+      });
+
+      const data = await res.json();
+      setLoading(false);
+      if (data.success === "true") {
+        Alert.alert(
+          "Swap Request",
+          "Your request has been successfully sent! Please check your email or the Notification section for updates.",
+          [{ text: "OK", onPress: () => navigation.navigate("Notification") }]
+        );
+      } else {
+        Alert.alert("Error", "Something went wrong! Please try again.");
+      }
+    } catch (error) {
+      setLoading(false);
+      Alert.alert("Error", "Something went wrong! Please try again.");
+    }
+  };
+
+  const addRequest = async () => {
+    setShowModal(false);
+    setSwapModal(false);
+    setLoading(true);
+    try {
+      const res = await fetch(`http://10.10.92.56:3000/api/req/${currentUser._id}/${travel__Id}/add_request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+      setLoading(false);
+
+      if (data.status === "202" && data.success === "false") {
+        Alert.alert(
+          "Request Error",
+          "You are not allowed to make multiple requests for the same PNR number.",
+          [{ text: "OK", onPress: () => navigation.navigate("/") }]
+        );
+      } else if (data.success === "true") {
+        Alert.alert(
+          "Request Successful",
+          "Your request has been successfully added to the All Requests section! Please check your email for further updates.",
+          [{ text: "OK", onPress: () => navigation.navigate("AllRequests") }]
+        );
+      }
+    } catch (error) {
+      setLoading(false);
+      Alert.alert("Error", "Something went wrong! Please try again.");
+    }
+  };
+
 
   const handleSwapRequest = () => {
     setShowModal(false);
@@ -49,10 +120,9 @@ const CardList = ({ travel, pnr }) => {
         </Text>
       ))}
 
-      <TouchableOpacity
-        onPress={() => setShowModal(true)}
-        style={styles.viewMoreButton}
-      >
+
+      <TouchableOpacity onPress={() => setShowModal(true)} style={styles.viewMoreButton}>
+
         <Text style={styles.viewMoreText}>View More</Text>
       </TouchableOpacity>
 
@@ -86,19 +156,20 @@ const CardList = ({ travel, pnr }) => {
               </Text>
             ))}
 
-            {/* <Button title="Ask for Swap" onPress={handleSwapRequest} /> */}
             <View style={styles.swapButtonContainer}>
               <TouchableOpacity onPress={handleSwapRequest}>
                 <LinearGradient
-                  // Gradient colors
-                  colors={["black", "#3B82F6", "#60A5FA", "#0072ff"]}
+                  colors={["#3B82F6", "#60A5FA"]}
+
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.gradientButton1}
                 >
-                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                   <MaterialIcons name="swap-horizontal-circle" size={24} color="white" />
-                    <Text style={[styles.buttonText1, { marginLeft: 10 ,marginRight:10}]}>
+
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <MaterialIcons name="swap-horizontal-circle" size={24} color="white" />
+                    <Text style={[styles.buttonText1, { marginLeft: 10 }]}>
+
                       Swap Request
                     </Text>
                   </View>
@@ -106,17 +177,18 @@ const CardList = ({ travel, pnr }) => {
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setShowModal(false)}>
                 <LinearGradient
-                  // Gradient colors
-                  colors={["black","#661400", "#661400", "#661400"]}
+
+                  colors={["#595959", "#595959"]}
+
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.gradientButton1}
                 >
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <AntDesign name="closecircle" size={20} color="white" />
-                    <Text style={[styles.buttonText1, { marginLeft: 10 ,marginRight:10}]}>
-                      Close
-                    </Text>
+
+                    <Text style={[styles.buttonText1, { marginLeft: 10 }]}>Close</Text>
+
                   </View>
                 </LinearGradient>
               </TouchableOpacity>
@@ -135,59 +207,58 @@ const CardList = ({ travel, pnr }) => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Are you sure for SWAP?</Text>
-             <TouchableOpacity onPress={handleSwapRequest}>
-                <LinearGradient
-                  // Gradient colors
-                  colors={["black", "#3B82F6", "#60A5FA", "black"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.gradientButton1}
-                >
-                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                   <FontAwesome5 name="praying-hands" size={24} color="white" />
-                    <Text style={[styles.buttonText1, { marginLeft: 10 ,marginRight:10}]}>
-                    Request User
-                    </Text>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
 
-             <TouchableOpacity onPress={handleSwapRequest}>
-                <LinearGradient
-                  // Gradient colors
-                  colors={["black", "green", "green", "black"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.gradientButton1}
-                >
-                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                   <Ionicons name="push" size={24} color="white" />
-                    <Text style={[styles.buttonText1, { marginLeft: 10 ,marginRight:10}]}>
-                    Push in Queue
-                    </Text>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
+            <TouchableOpacity onPress={confirm}>
+              <LinearGradient
+                colors={["black", "#3B82F6", "#60A5FA", "black"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.gradientButton1}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <FontAwesome5 name="praying-hands" size={24} color="white" />
+                  <Text style={[styles.buttonText1, { marginLeft: 10 }]}>Request User</Text>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={addRequest}>
+              <LinearGradient
+                colors={["black", "green", "green", "black"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.gradientButton1}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Ionicons name="push" size={24} color="white" />
+                  <Text style={[styles.buttonText1, { marginLeft: 10 }]}>Push in Queue</Text>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setSwapModal(false)}>
-                <LinearGradient
-                  // Gradient colors
-                  colors={["black", "grey", "grey", "black"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.gradientButton1}
-                >
-                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                   <AntDesign name="closecircle" size={20} color="white" />
-                    <Text style={[styles.buttonText1, { marginLeft: 10 ,marginRight:10}]}>
-                    Cancel
-                    </Text>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
+              <LinearGradient
+                colors={["black", "grey", "grey", "black"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.gradientButton1}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Entypo name="circle-with-cross" size={24} color="white" />
+                  <Text style={[styles.buttonText1, { marginLeft: 10 }]}>Close</Text>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
+
+      {/* Loader */}
+      {loading && (
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
     </View>
   );
 };
@@ -309,4 +380,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 4,
   },
+
+  loader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.7)",
+  },
+
 });

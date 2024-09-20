@@ -5,7 +5,7 @@ import {
   getUsers,
   signout,
   test,
-  updateUser,
+  updateUser, updateExpoToken
 
 } from '../controllers/userController.js';
 import { verifyToken } from './../utilis/verifyUser.js';
@@ -14,6 +14,9 @@ const router = express.Router();
 
 router.get('/test', test);
 router.put('/update/:userId', verifyToken, updateUser);
+
+router.patch('/updateExpoToken/:userId', updateExpoToken);
+
 router.delete('/delete/:userId', verifyToken, deleteUser);
 router.post('/signout', signout);
 router.get('/getusers', verifyToken, getUsers);
