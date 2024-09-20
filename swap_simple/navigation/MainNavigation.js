@@ -9,16 +9,15 @@ import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Home from '../Screens/Home';
-<<<<<<< Updated upstream
 
-import Signin from '../Screens/sigin';
-=======
->>>>>>> Stashed changes
+
+
 import Signup from '../Screens/signup';
 import toastConfig from '../toastConfig';
 import SeatSelection from '../components/SeatSelection';
 import SwapResults from '../Screens/SwapResults';
 import All_request from '../Screens/All_request';
+
 import About from '../Screens/About';
 import Help from '../Screens/Help';
 import Profile from '../Screens/Profile';
@@ -27,6 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { signoutSuccess } from '../redux/user/userSlice';
 import NotificationPage from '../Screens/NotificationPage';
 import { useNavigation } from '@react-navigation/native';
+
 
 
 const darkTheme = {
@@ -93,19 +93,26 @@ function SwapResultsScreen() {
   );
 }
 
+function SwapResultsScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: darkTheme.backgroundColor }}>
+      {/* <Text style={{ color: darkTheme.textColor }}>Seat Selection Screen</Text>
+       */}
+       <SwapResults/>
+    </View>
+  );
+}
+
 function AllRequestsScreen() {
   const { currentUser } = useSelector((state) => state.user);
   return (
-<<<<<<< Updated upstream
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: "#1e293b"}}>
-      {/* <Text style={{ color: darkTheme.textColor }}>All Requests Screen</Text> */}
-      <All_request/>
 
-=======
+  
+
     <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: "#1e293b" }}>
       {!currentUser?<Home/>:<All_request/>}
       {/* <All_request /> */}
->>>>>>> Stashed changes
+
     </View>
   );
 }
@@ -152,11 +159,9 @@ function HomeStackScreen() {
       <HomeStack.Screen name="SeatSelection" component={SeatSelectionScreen} options={{ headerShown: false }} />
 
       <HomeStack.Screen name="SwapResults" component={SwapResultsScreen} options={{ headerShown: false }} />
-<<<<<<< Updated upstream
 
-=======
       <HomeStack.Screen name="Notification" component={NotificationScreen} options={{ headerShown: false }} />
->>>>>>> Stashed changes
+
     </HomeStack.Navigator>
   );
 }

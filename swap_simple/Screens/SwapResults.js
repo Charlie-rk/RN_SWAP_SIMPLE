@@ -94,7 +94,9 @@ const SwapResults = () => {
             style={{ marginTop: 20, alignItems: "center" }}
           >
             <LinearGradient
+
              colors={["black", "#60A5FA", "#60A5FA", "black"]}
+
              start={{ x: 0, y: 0 }}
              end={{ x: 1, y: 0 }}
               style={{
