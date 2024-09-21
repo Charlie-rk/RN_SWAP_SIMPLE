@@ -138,15 +138,7 @@ function SwapResultsScreen() {
   );
 }
 
-function SwapResultsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: darkTheme.backgroundColor }}>
-      {/* <Text style={{ color: darkTheme.textColor }}>Seat Selection Screen</Text>
-       */}
-       <SwapResults/>
-    </View>
-  );
-}
+
 
 function AllRequestsScreen() {
   const { currentUser } = useSelector((state) => state.user);
