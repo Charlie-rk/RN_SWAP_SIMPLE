@@ -10,12 +10,14 @@ import { Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Home from '../Screens/Home';
 
+
 import Signin from '../Screens/sigin';
 import Signup from '../Screens/signup';
 // import toastConfig from '../toastConfig';
 import SeatSelection from '../components/SeatSelection';
 import SwapResults from '../Screens/SwapResults';
 import All_request from '../Screens/All_request';
+
 import About from '../Screens/About';
 import Help from '../Screens/Help';
 import Profile from '../Screens/Profile';
@@ -29,11 +31,12 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 
 
-// const darkTheme = {
-//   backgroundColor: '#1e293b',
-//   textColor: 'white',
-//   iconColor: 'white',
-// };
+
+const darkTheme = {
+  backgroundColor: '#1e293b',
+  textColor: 'white',
+  iconColor: 'white',
+};
 
 function ProfileScreen() {
   const { theme } = useSelector((state) => state.theme);
@@ -135,6 +138,16 @@ function SwapResultsScreen() {
   );
 }
 
+function SwapResultsScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: darkTheme.backgroundColor }}>
+      {/* <Text style={{ color: darkTheme.textColor }}>Seat Selection Screen</Text>
+       */}
+       <SwapResults/>
+    </View>
+  );
+}
+
 function AllRequestsScreen() {
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
@@ -144,9 +157,13 @@ function AllRequestsScreen() {
     iconColor: theme === 'dark' ? 'white' : 'black',
   };
   return (
+
+  
+
     <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: "#1e293b" }}>
       {!currentUser?<Home/>:<All_request/>}
       {/* <All_request /> */}
+
     </View>
   );
 }
@@ -222,7 +239,9 @@ function HomeStackScreen() {
       <HomeStack.Screen name="SeatSelection" component={SeatSelectionScreen} options={{ headerShown: false }} />
 
       <HomeStack.Screen name="SwapResults" component={SwapResultsScreen} options={{ headerShown: false }} />
+
       <HomeStack.Screen name="Notification" component={NotificationScreen} options={{ headerShown: false }} />
+
     </HomeStack.Navigator>
   );
 }

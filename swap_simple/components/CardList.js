@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   Modal,
+
   StyleSheet,
   Dimensions,
   Alert,
@@ -22,10 +23,12 @@ import baseUrl from './../Services/constant';
 
 const CardList = ({ travel, pnr }) => {
   const [loading, setLoading] = useState(false);
+
   const [showModal, setShowModal] = useState(false);
   const [swapModal, setSwapModal] = useState(false);
   const { travel__Id } = useSelector((state) => state.user);
   const { currentUser } = useSelector((state) => state.user);
+
   const travelId = travel._id;
   const navigation = useNavigation();
 
@@ -92,6 +95,7 @@ const CardList = ({ travel, pnr }) => {
     }
   };
 
+
   const handleSwapRequest = () => {
     setShowModal(false);
     setSwapModal(true);
@@ -117,7 +121,9 @@ const CardList = ({ travel, pnr }) => {
         </Text>
       ))}
 
+
       <TouchableOpacity onPress={() => setShowModal(true)} style={styles.viewMoreButton}>
+
         <Text style={styles.viewMoreText}>View More</Text>
       </TouchableOpacity>
 
@@ -150,17 +156,21 @@ const CardList = ({ travel, pnr }) => {
                 {passenger.currentBerthNo}
               </Text>
             ))}
+
             <View style={styles.swapButtonContainer}>
               <TouchableOpacity onPress={handleSwapRequest}>
                 <LinearGradient
                   colors={["#3B82F6", "#60A5FA"]}
+
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.gradientButton1}
                 >
+
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <MaterialIcons name="swap-horizontal-circle" size={24} color="white" />
                     <Text style={[styles.buttonText1, { marginLeft: 10 }]}>
+
                       Swap Request
                     </Text>
                   </View>
@@ -168,14 +178,18 @@ const CardList = ({ travel, pnr }) => {
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setShowModal(false)}>
                 <LinearGradient
+
                   colors={["#595959", "#595959"]}
+
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.gradientButton1}
                 >
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <AntDesign name="closecircle" size={20} color="white" />
+
                     <Text style={[styles.buttonText1, { marginLeft: 10 }]}>Close</Text>
+
                   </View>
                 </LinearGradient>
               </TouchableOpacity>
@@ -194,6 +208,7 @@ const CardList = ({ travel, pnr }) => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Are you sure for SWAP?</Text>
+
             <TouchableOpacity onPress={confirm}>
               <LinearGradient
                 colors={["black", "#3B82F6", "#60A5FA", "black"]}
@@ -248,6 +263,7 @@ const CardList = ({ travel, pnr }) => {
     </View>
   );
 };
+
 export default CardList;
 
 const { width } = Dimensions.get("window");
@@ -365,6 +381,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 4,
   },
+
   loader: {
     position: "absolute",
     top: 0,
@@ -375,4 +392,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.7)",
   },
+
 });

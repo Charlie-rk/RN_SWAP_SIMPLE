@@ -19,10 +19,18 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 import Entypo from '@expo/vector-icons/Entypo';
+
+
+
 import GradientButton from "./GradientButton";
 import baseUrl from "../Services/constant";
 // import { , Text } from 'react-native';
+
 LogBox.ignoreAllLogs();
+
+
+
+
 
 const { width: screenWidth } = Dimensions.get("window");
 const animationHeight = screenWidth * (250 / 375);
@@ -168,7 +176,11 @@ const SeatSelection = () => {
                 <LinearGradient
                   // Gradient colors
                   activeOpacity={1}
-                  colors={["#60A5FA", "#60A5FA","#60A5FA","#60A5FA"]}
+
+
+                  colors={["grey", "grey","grey","#e6e6e6"]}
+
+
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.gradientButton}
@@ -216,7 +228,9 @@ const SeatSelection = () => {
             > 
             <View  style={{ flexDirection: "row", alignItems: "center" }} >
             <Entypo name="add-to-list" size={24} color="white" />
+
             <Text style={[styles.buttonText, { marginLeft: 10 ,marginRight:0}]}>Add Coach and Seats</Text>
+
             </View>
             
 
