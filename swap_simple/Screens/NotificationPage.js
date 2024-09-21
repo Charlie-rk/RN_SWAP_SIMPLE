@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, ScrollView, RefreshControl, LogBox } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native'; // Import the hook
 import NotificationCard from '../components/NotificationCard';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
+import baseUrl from '../Services/constant';
+LogBox.ignoreAllLogs();
 const NotificationPage = () => {
   const user = useSelector((state) => state.user);
   const [notifications, setNotifications] = useState([]);
@@ -17,17 +18,17 @@ const NotificationPage = () => {
     setLoading(true); // Ensure loading state is reset each time
     setNoNotifications(false); // Reset noNotifications to false each time
   
-   console.log("Let me See ---",user.currentUser);
+  //  console.log("Let me See ---",user.currentUser);
 
     if (!user.currentUser) {
-      console.log("If then why so ");
+      // console.log("If then why so ");
       navigation.navigate('Home'); // Navigate to HomeScreen if no currentUser
       return; // Exit function early to avoid fetching notifications
     }
 
     try {
       const response = await fetch(
-        `http://10.10.92.56:3000/api/pnr/getAllNotifications/${user.currentUser._id}`, 
+        `${baseUrl}/api/pnr/getAllNotifications/${user.currentUser._id}`, 
         {
           method: 'GET',
           headers: {
@@ -47,7 +48,7 @@ const NotificationPage = () => {
         setNoNotifications(true);
       }
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      // console.error('Error fetching notifications:', error);
       setNoNotifications(true);
     } finally {
       setLoading(false);
@@ -57,7 +58,7 @@ const NotificationPage = () => {
 
   // Use focus effect to trigger fetchNotifications when the screen is focused
   // if(user.currentUser){
-    console.log(user.currentUser);
+    // console.log(user.currentUser);
     useFocusEffect(
       useCallback(() => {
         fetchNotifications();

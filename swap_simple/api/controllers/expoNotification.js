@@ -8,7 +8,7 @@ let expo = new Expo();
 export const sendExpoNotification = async (pushToken, message) => {
   // Check if the pushToken is a valid Expo push token
   if (!Expo.isExpoPushToken(pushToken)) {
-    console.error(`Push token ${pushToken} is not a valid Expo push token`);
+    // console.error(`Push token ${pushToken} is not a valid Expo push token`);
     return;
   }
 
@@ -27,7 +27,7 @@ export const sendExpoNotification = async (pushToken, message) => {
   try {
     // Send the notification
     let tickets = await expo.sendPushNotificationsAsync(messages);
-    console.log(tickets);
+    // console.log(tickets);
   } catch (error) {
     console.error(error);
   }

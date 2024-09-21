@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
-import { Pressable ,Alert,ActivityIndicator} from "react-native";
+import { Pressable ,Alert,ActivityIndicator, LogBox} from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import axios from "axios";
 import {
@@ -22,8 +22,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { resetError, signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
 import OAuth from "../components/OAuth";
 import { registerForPushNotificationsAsync } from "../Services/NotificationToken";
+import baseUrl from "../Services/constant";
 
-
+LogBox.ignoreAllLogs();
 const Signin = () => {
   const [isPressedSubmit, setIsPressedSubmit] = useState(false);
   const [isPressedGoogle, setIsPressedGoogle] = useState(false);
@@ -34,7 +35,7 @@ const Signin = () => {
   const { loading, error: errorMessage } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  console.log(errorMessage);
+  // console.log(errorMessage);
   // Function to show alert
   const showErrorAlert = (message) => {
     Alert.alert('Error', message, [
@@ -76,7 +77,7 @@ const Signin = () => {
 
     try {
       dispatch(signInStart());
-      const res = await fetch("http://10.10.92.56:3000/api/auth/signin", {
+      const res = await fetch(`${baseUrl}/api/auth/signin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -92,7 +93,7 @@ const Signin = () => {
         navigation.navigate("Home");
       }
       const token=registerForPushNotificationsAsync(userId);
-      console.log(token);
+      // console.log(token);
     } catch (error) {
       dispatch(signInFailure(error.message));
     }

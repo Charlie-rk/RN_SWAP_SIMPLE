@@ -11,7 +11,7 @@ import 'dotenv/config';
 import Request from "../models/requestModel.js";
 
 export const getAllNotifications = async (req, res) => {
-  console.log("RKSAN");
+  // console.log("RKSAN");
   try {
     // Extract userId from the request parameters
     const { userId } = req.params;
@@ -21,11 +21,11 @@ export const getAllNotifications = async (req, res) => {
       return res.status(400).json({ error: 'User ID is required' });
     }
 
-    console.log(`Received request for fetching notifications for user ${userId}`);
+    // console.log(`Received request for fetching notifications for user ${userId}`);
 
     // Find the user by userId
     const user = await User.findById(userId);
-    console.log(user);
+    // console.log(user);
     // Check if user exists
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -33,18 +33,18 @@ export const getAllNotifications = async (req, res) => {
 
     // Check if user has notifications
     if (!user.notifications || user.notifications.length === 0) {
-      console.log("NO notification for the user");
+      // console.log("NO notification for the user");
       return res.status(404).json({ error: 'No notifications found for this user' });
     }
 
     // Sort notifications by createdAt in descending order (-1)
-    console.log("OH notfiy him");
+    // console.log("OH notfiy him");
     const sortedNotifications = user.notifications.sort((a, b) => b.createdAt - a.createdAt);
 
     // Send the sorted notifications
     res.status(200).json({ notifications: sortedNotifications });
   } catch (error) {
-    console.error('Error fetching notifications:', error);
+    // console.error('Error fetching notifications:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -54,9 +54,9 @@ export const markNotificationAsSeen = async (req, res) => {
   try {
     // Extract the userId and notificationId from the request parameters
     const { userId, notificationId } = req.params;
-    console.log("Mark nitfication section here")
-    console.log("userId", userId);
-    console.log("notificationId", notificationId);
+    // console.log("Mark nitfication section here")
+    // console.log("userId", userId);
+    // console.log("notificationId", notificationId);
 
     // Check if userId and notificationId are provided
     if (!userId || !notificationId) {
@@ -95,10 +95,10 @@ export const markNotificationAsSeen = async (req, res) => {
 
 export const deactivateNotification = async (req, res) => {
   try {
-    console.log("deactvitidfffffffffffff");
+    // console.log("deactvitidfffffffffffff");
     const { userId, notificationId } = req.params;
-    console.log(userId);
-    console.log(notificationId);
+    // console.log(userId);
+    // console.log(notificationId);
     if (!userId || !notificationId) {
       return res.status(400).json({ error: 'User ID and Notification ID are required' });
     }
@@ -119,13 +119,13 @@ export const deactivateNotification = async (req, res) => {
 
 
   } catch (error) {
-    console.log('Error deactivating notification', error);
+    // console.log('Error deactivating notification', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
 
 export const deleteNotification = async (req, res) => {
-  console.log("I am inside deleteNotification");
+  // console.log("I am inside deleteNotification");
   try {
 
     const notificationId = req.body.notificationId;
@@ -135,7 +135,7 @@ export const deleteNotification = async (req, res) => {
     }
     res.status(200).json({ message: "Notification deleted successfully" });
   } catch (error) {
-    console.log("Error deleting notifications: ", error);
+    // console.log("Error deleting notifications: ", error);
     res.status(500).json({ message: "Server error" });
   }
 
@@ -155,22 +155,22 @@ const transporter = nodemailer.createTransport({
 const sendMail = async (mailOptions) => {
   try {
     await transporter.sendMail(mailOptions);
-    console.log("Email has been sent successfully");
+    // console.log("Email has been sent successfully");
   } catch (error) {
-    console.error("Error sending email", error);
+    // console.error("Error sending email", error);
     // Logging and returning instead of throwing error
   }
 };
 
 export const sendNotification = async ({ user1, user2, message1, message2, subject1, subject2, takeResponse1, takeResponse2, travelId1, travelId2 }) => {
   try {
-    console.log(user1);
-    console.log(user2);
+    // console.log(user1);
+    // console.log(user2);
     // const user1 = await User.findById(userId1);
     // const user2 = await User.findById(userId2);
 
     if (!user1 || !user2) {
-      console.error("User Not Found");
+      // console.error("User Not Found");
       return;
     }
 
@@ -179,8 +179,8 @@ export const sendNotification = async ({ user1, user2, message1, message2, subje
 
     await user1.save();
     await user2.save();
-    console.log(user1.email);
-    console.log(user2.email);
+    // console.log(user1.email);
+    // console.log(user2.email);
     const emailOptions1 = {
       from: {
         name: "Rustam Kumar",
@@ -313,7 +313,7 @@ export const sendNotification = async ({ user1, user2, message1, message2, subje
     };
     await sendMail(emailOptions1);
     await sendMail(emailOptions2);
-    console.log("Notifications sent successfully");
+    // console.log("Notifications sent successfully");
     
     const pushToken1=user1.ExpoToken;
     const pushToken2=user2.ExpoToken;
@@ -331,13 +331,13 @@ export const sendNotification = async ({ user1, user2, message1, message2, subje
 
 export const sendNotification2 = async ({ user1, user2, message1, message2, subject1, subject2, takeResponse1, takeResponse2, travelId1, travelId2 }) => {
   try {
-    console.log(user1);
-    console.log(user2);
+    // console.log(user1);
+    // console.log(user2);
     // const user1 = await User.findById(userId1);
     // const user2 = await User.findById(userId2);
 
     if (!user1 || !user2) {
-      console.error("User Not Found");
+      // console.error("User Not Found");
       return;
     }
 
@@ -346,8 +346,8 @@ export const sendNotification2 = async ({ user1, user2, message1, message2, subj
 
     await user1.save();
     await user2.save();
-    console.log(user1.email);
-    console.log(user2.email);
+    // console.log(user1.email);
+    // console.log(user2.email);
     const emailOptions1 = {
       from: {
         name: "Rustam Kumar",
@@ -488,16 +488,16 @@ export const sendNotification2 = async ({ user1, user2, message1, message2, subj
       sendExpoNotification(pushToken2, subject2);
 
 
-    console.log("Notifications sent successfully");
+    // console.log("Notifications sent successfully");
   } catch (error) {
-    console.error("Error sending Notification", error);
+    // console.error("Error sending Notification", error);
     // Logging and returning instead of throwing error
   }
 };
 
 export const swapRequestNotification = async (req, res) => {
-  console.log("Swap request notification");
-  console.log(req.body);
+  // console.log("Swap request notification");
+  // console.log(req.body);
 
   //const {requesterId,accepterTravelId}=req.body;
   const { requesterTravelId, accepterTravelId } = req.body;
@@ -518,8 +518,8 @@ export const swapRequestNotification = async (req, res) => {
     const PresentSeat = requesterTravel.passengerInfo;
     const WantedSeat = accepterTravel.passengerInfo;
     
-    console.log("present seat ");
-    console.log(PresentSeat);
+    // console.log("present seat ");
+    // console.log(PresentSeat);
     
     // Update PresentSeat by removing the _id property
     const updatedPresentSeat = PresentSeat.map(seat => {
@@ -545,8 +545,8 @@ const wantedSeatString = updatedWantedSeat.map(seat => `Coach: ${seat.currentCoa
 const messageToAccepter = `Someone with ${presentSeatString} is requesting to swap seats with you`;
 const messageToRequester = `You have successfully made a request to swap seats with seat ${wantedSeatString}`;
 
-console.log(messageToAccepter);
-console.log(messageToRequester);
+// console.log(messageToAccepter);
+// console.log(messageToRequester);
     const subjectforRequester = "RequestSeatSwap";
     const subjectforAccepter = "AcceptSeatSwap";
 
@@ -564,7 +564,7 @@ console.log(messageToRequester);
       travelId1: requesterTravelId,
       travelId2: accepterTravelId
     });
-    console.log("Notify him succeed");
+    // console.log("Notify him succeed");
     return res
       .status(200)
       .json({ message: "Swap request notification sent successfully", success: "true" });
@@ -581,7 +581,7 @@ export const acceptSwapRequest = async (req, res) => {
 
   try {
 
-    console.log("I am inside acceptSwapRequest");
+    // console.log("I am inside acceptSwapRequest");
     const travel1 = await Travel.findById(travelId1).populate('user');
     const travel2 = await Travel.findById(travelId2).populate('user');
 
@@ -622,7 +622,7 @@ export const acceptSwapRequest = async (req, res) => {
       travelId1: travel1._id,
       travelId2: travel2._id
     });
-    console.log("ACCEPT SEAT REQUEST");
+    // console.log("ACCEPT SEAT REQUEST");
     return res
       .status(200)
       .json({ message: "Contact information swapped successfully" });
@@ -643,12 +643,12 @@ export const acceptSwapRequest = async (req, res) => {
 export const sendNotification_Rejection = async ({ user1, user2, message1, message2, subject1, subject2, takeResponse1, takeResponse2, travelId1, travelId2 }) => {
   try {
     console.log(user1);
-    console.log(user2);
+    // console.log(user2);
     // const user1 = await User.findById(userId1);
     // const user2 = await User.findById(userId2);
 
     if (!user1 || !user2) {
-      console.error("User Not Found");
+      // console.error("User Not Found");
       return;
     }
 
@@ -657,8 +657,8 @@ export const sendNotification_Rejection = async ({ user1, user2, message1, messa
 
     await user1.save();
     await user2.save();
-    console.log(user1.email);
-    console.log(user2.email);
+    // console.log(user1.email);
+    // console.log(user2.email);
     const emailOptions1 = {
       from: {
         name: "Rustam Kumar",
@@ -795,7 +795,7 @@ export const sendNotification_Rejection = async ({ user1, user2, message1, messa
 
     await sendMail(emailOptions1);
     await sendMail(emailOptions2);
-    console.log("Notifications sent successfully");
+    // console.log("Notifications sent successfully");
 
     const pushToken1=user1.ExpoToken;
     const pushToken2=user2.ExpoToken;
@@ -820,7 +820,7 @@ export const rejectSwapRequest = async (req, res) => {
 
   try {
 
-    console.log("I am inside rejectSwapRequest");
+    // console.log("I am inside rejectSwapRequest");
     // const travel1 = await Travel.findById(travelId1).populate('user');
     const requesterTravel = await Travel.findById(requesterTravelId).populate('user');
     const rejecterTravel = await Travel.findById(rejecterTravelId).populate('user');
@@ -836,8 +836,8 @@ export const rejectSwapRequest = async (req, res) => {
     const PresentSeat = requesterTravel.passengerInfo;
     const rejecterSeat = rejecterTravel.passengerInfo;
     
-    console.log("present seat ");
-    console.log(PresentSeat);
+    // console.log("present seat ");
+    // console.log(PresentSeat);
     
     // Update PresentSeat by removing the _id property
     const updatedPresentSeat = PresentSeat.map(seat => {
@@ -909,13 +909,13 @@ const wantedSeatString = updatedrejecterSeat.map(seat => `Coach: ${seat.currentC
 
 export const sendNotification_Confirm = async ({ user1, user2, message1, message2, subject1, subject2, takeResponse1, takeResponse2, travelId1, travelId2 }) => {
   try {
-    console.log(user1);
-    console.log(user2);
+    // console.log(user1);
+    // console.log(user2);
     // const user1 = await User.findById(userId1);
     // const user2 = await User.findById(userId2);
 
     if (!user1 || !user2) {
-      console.error("User Not Found");
+      // console.error("User Not Found");
       return;
     }
 
@@ -924,8 +924,8 @@ export const sendNotification_Confirm = async ({ user1, user2, message1, message
 
     await user1.save();
     await user2.save();
-    console.log(user1.email);
-    console.log(user2.email);
+    // console.log(user1.email);
+    // console.log(user2.email);
     const emailOptions1 = {
       from: {
         name: "Rustam Kumar",
@@ -1062,7 +1062,7 @@ export const sendNotification_Confirm = async ({ user1, user2, message1, message
     await sendMail(emailOptions2);
 
 
-    console.log("Notifications sent successfully");
+    // console.log("Notifications sent successfully");
 
     const pushToken1=user1.ExpoToken;
     const pushToken2=user2.ExpoToken;
@@ -1081,19 +1081,19 @@ export const sendNotification_Confirm = async ({ user1, user2, message1, message
 
 
 export const confirmSwapSeat = async (req, res) => {
-  console.log("🙌 final swap so let se what happen !!!!!! 🕵️‍♂️🕵️‍♂️🕵️‍♂️🕵️‍♂️🕵️‍♂️")
+  // console.log("🙌 final swap so let se what happen !!!!!! 🕵️‍♂️🕵️‍♂️🕵️‍♂️🕵️‍♂️🕵️‍♂️")
   const { userId, ownTravelId, otherTravelId } = req.body;
-  console.log(req.body)
+  // console.log(req.body)
   try {
-    console.log("HII1");
+    // console.log("HII1");
     const swap = await Swap.findOne({
       $or: [{ user1: userId, travel1: ownTravelId, travel2: otherTravelId }, { user2: userId, travel1: otherTravelId, travel2: ownTravelId }]
     });
-    console.log("HII2");
+    // console.log("HII2");
     if (!swap) {
       return res.status(404).json({ message: "Swap not found or not confirmed" });
     }
-    console.log("HII3");
+    // console.log("HII3");
     // if(swap.travel1.equals(ownTravelId))
     if (swap.user1.equals(userId)) {
       swap.isConfirmedByUser1 = true;
@@ -1102,15 +1102,15 @@ export const confirmSwapSeat = async (req, res) => {
       swap.isConfirmedByUser2 = true;
     }
     await swap.save();
-    console.log("HII4");
+    // console.log("HII4");
     if (!(swap.isConfirmedByUser1 && swap.isConfirmedByUser2)) {
-      console.log("ytu");
+      // console.log("ytu");
       return res.status(200).json({ message: "Swap not confirmed by both users" });
       // return res.status(400).json({ message: "Swap not confirmed by both users" });
     }
-    console.log("HII5");
+    // console.log("HII5");
     const travel1 = await Travel.findByIdAndDelete(ownTravelId).populate('user');
-    console.log(travel1);
+    // console.log(travel1);
     const travel2 = await Travel.findByIdAndDelete(otherTravelId).populate('user');
     // const travel=await Travel.findById(travelID);
     // if(!travel){
@@ -1125,11 +1125,11 @@ export const confirmSwapSeat = async (req, res) => {
 
     }
     const rest = await Request.findOne({ travelID: ownTravelId });
-    console.log(rest);
+    // console.log(rest);
     const resl = await Request.findOneAndDelete({ travelID: ownTravelId });
     const resl2 = await Request.findOneAndDelete({ travelID: otherTravelId });
 
-    console.log("deleted Success");
+    // console.log("deleted Success");
     const user1Message = `Your seat (${travel1.seatInfo.coach}-${travel1.seatInfo.berth}) is confirmed with ${travel2.username}'s seat (${travel2.seatInfo.coach}-${travel2.seatInfo.berth}).`;
     const user2Message = `Your seat (${travel2.seatInfo.coach}-${travel2.seatInfo.berth}) is confirmed with ${travel1.username}'s seat (${travel1.seatInfo.coach}-${travel1.seatInfo.berth}).`;
 
@@ -1147,7 +1147,7 @@ export const confirmSwapSeat = async (req, res) => {
       travelId1: travel1._id,
       travelId2: travel2._id
     });
-    console.log("succed you completed")
+    // console.log("succed you completed")
     return res.status(200).json({
       message: "Travel schemas deleted successfully and notifications sent",
     });

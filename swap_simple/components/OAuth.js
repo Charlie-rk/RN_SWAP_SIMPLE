@@ -8,6 +8,8 @@ import { signInSuccess } from '../redux/user/userSlice';
 import { app2 } from '../firebase'; // Make sure this points to your Firebase configuration for app2
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { registerForPushNotificationsAsync } from '../Services/NotificationToken';
+import baseUrl from '../Services/constant';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -30,7 +32,7 @@ export default function OAuth() {
                 .then(async (result) => {
                     const { user } = result;
                     // Now send the user data to your backend server
-                    const res = await fetch('http://10.10.92.56:3000/api/auth/google', {
+                    const res = await fetch(`${baseUrl}/api/auth/google`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -43,7 +45,9 @@ export default function OAuth() {
                     const data = await res.json();
                     if (res.ok) {
                         dispatch(signInSuccess(data));
-                        navigation.navigate('Home'); // Navigate to the home screen after successful sign-in
+                        const userId=data._id;
+                        navigation.navigate('Home');
+                        const token=registerForPushNotificationsAsync(userId); // Navigate to the home screen after successful sign-in
                     }
                 })
                 .catch((error) => {

@@ -12,6 +12,7 @@ import {
   FlatList,
   Platform,
   RefreshControl,
+  LogBox
 } from "react-native";
 import { useSelector } from "react-redux";
 // import { Button } from "react-native-elements";
@@ -21,8 +22,11 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import baseUrl from "../Services/constant";
+LogBox.ignoreAllLogs();
 
-const All_request = () => {
+const All_request = () => { 
+   const { theme } = useSelector((state) => state.theme);
   const [request, setRequest] = useState([]);
   const [filteredRequest, setFilteredRequest] = useState([]);
   const { currentUser } = useSelector((state) => state.user);
@@ -42,14 +46,14 @@ const All_request = () => {
     // Fetch data function (can be called on pull-to-refresh or page load)
   const fetchData = async () => {
     if (!currentUser) {
-      console.log("If then why so ");
+      // console.log("If then why so ");
       navigation.navigate('Home'); // Navigate to HomeScreen if no currentUser
       return; // Exit function early to avoid fetching notifications
     }
 
     try {
       const res = await fetch(
-        `http://10.10.92.56:3000/api/req/${currentUser._id}/allReq`
+        `${baseUrl}/api/req/${currentUser._id}/allReq`
       );
       if (res.ok) {
         const data = await res.json();
@@ -78,7 +82,7 @@ const All_request = () => {
     fetchData(); // Re-fetch data on pull-to-refresh
   }, [currentUser]);
 
-  console.log(openDatePicker);
+  // console.log(openDatePicker);
     const toogleDatePicker=()=>{
        
         setOpenDatePicker(!openDatePicker);
@@ -107,8 +111,8 @@ const All_request = () => {
   };
   const applyFilters = () => {
     const { trainNo, dt } = formData;
-    console.log("train No: " + trainNo);
-    console.log("Date: " + dt);
+    // console.log("train No: " + trainNo);
+    // console.log("Date: " + dt);
     const filtered = request.filter((req) => {
       const matchesTrainNo = trainNo ? req.trainNo.includes(trainNo) : true;
       const matchesDate = dt ? req.dt === dt : true;
@@ -127,7 +131,7 @@ const All_request = () => {
     setShowModal(false);
     try {
       const res = await fetch(
-        `http://10.10.92.56:3000/api/req/delete/${currentUser._id}/${travelID}`,
+        `${baseUrl}/api/req/delete/${currentUser._id}/${travelID}`,
         {
           method: "DELETE",
         }
@@ -141,7 +145,7 @@ const All_request = () => {
       }
     } catch (error) {
         Alert.alert("Error", "Something went wrong. Please try again.");
-      console.log("error");
+      // console.log("error");
     }
   };
   const handleOpenModal = (preferences) => {
@@ -150,16 +154,16 @@ const All_request = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9'}]}>
       {request.length === 0 ? (
         <View style={styles.emptyContainer}>
           {/* <Text style={styles.emptyEmoji}>😭</Text> */}
-          <MaterialCommunityIcons name="crosshairs-question" size={100} color="white" />
-          <Text style={styles.emptyText}> No Request found. </Text>
-          <Text style={styles.emptyText}>
+          <MaterialCommunityIcons name="crosshairs-question" size={100} color={theme === "dark" ? "white" : "black"}  />
+          <Text style={[styles.emptyText,{ color: theme === "dark" ? "white" : "black" }]}> No Request found. </Text>
+          <Text style={[styles.emptyText,{ color: theme === "dark" ? "white" : "black" }]}>
              Please wait for SOMEONE FOR THE REQUEST. 😊
           </Text>
-          <Text style={styles.emptyText}>Thank you for your patience! </Text>
+          <Text style={[styles.emptyText,{ color: theme === "dark" ? "white" : "black" }]}>Thank you for your patience! </Text>
         </View>
       ) : (
 
@@ -178,7 +182,7 @@ const All_request = () => {
   <View style={styles.filterForm}>
     <View style={styles.rowContainer}>
       <View style={styles.filterItem}>
-        <Text style={{ color: "white" }}>Train No</Text>
+        <Text style={{ color: theme === "dark" ? "white" : "black" }}>Train No</Text>
         <TextInput
           style={styles.input}
           placeholder="Train No"
@@ -190,7 +194,7 @@ const All_request = () => {
     
      
       <View style={styles.filterItem}>
-        <Text style={{ color: "white" }}>Date {formData.dt} </Text>
+        <Text style={{color: theme === "dark" ? "white" : "black"  }}>Date {formData.dt} </Text>
         <TouchableOpacity onPress={toogleDatePicker}
 
          onPressOut={toogleDatePicker} >
@@ -409,7 +413,7 @@ export default All_request;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1e293b",
+    // backgroundColor: "#1e293b",
     paddingHorizontal: 10,
   },
   emptyContainer: {
@@ -421,11 +425,11 @@ const styles = StyleSheet.create({
     fontSize: 40,
   },
   emptyText: {
-    fontSize: 18,
+    fontSize: 14,
     textAlign: "center",
     marginVertical: 5,
     fontFamily: "sans-serif",
-    color:'white',
+    // color:'white',
   },
   header: {
     paddingVertical: 4,

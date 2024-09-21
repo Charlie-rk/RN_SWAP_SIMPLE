@@ -9,6 +9,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Pressable,
+  LogBox,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import * as ImagePicker from 'expo-image-picker';
@@ -17,7 +18,9 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { updateStart, updateSuccess, updateFailure, deleteUserSuccess, deleteUserFailure, signoutSuccess, deleteUserStart } from "../redux/user/userSlice";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
+import baseUrl from "../Services/constant";
 
+LogBox.ignoreAllLogs();
 export default function DashProfile() {
   const { currentUser, error, loading } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
@@ -31,7 +34,7 @@ export default function DashProfile() {
   const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  console.log("urel--",currentUser.profilePicture);
+  // console.log("urel--",currentUser.profilePicture);
   const handleImageChange = async() => {
     // console.log("Your are there ii a ");
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -83,7 +86,7 @@ export default function DashProfile() {
         setImageFileUploadProgress(progress.toFixed(0));
       },
       (error) => {
-        console.log("error",error);
+        // console.log("error",error);
         setImageFileUploadError(
           "Could not upload image (File must be less than 2MB)"
         );
@@ -122,7 +125,7 @@ export default function DashProfile() {
 
     try {
       dispatch(updateStart());
-      const res = await fetch(`http://10.10.92.56:3000/api/user/update/${currentUser._id}`, {
+      const res = await fetch(`${baseUrl}/api/user/update/${currentUser._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -144,7 +147,7 @@ export default function DashProfile() {
     setShowModal(false);
     try {
       dispatch(deleteUserStart());
-      const res = await fetch(`http://10.10.92.56:3000/api/user/delete/${currentUser._id}`, {
+      const res = await fetch(`${baseUrl}/api/user/delete/${currentUser._id}`, {
         method: "DELETE",
       });
       const data = await res.json();
@@ -162,7 +165,7 @@ export default function DashProfile() {
   const handleSignout = async () => {
     console.log("Sign off");
     try {
-      const res = await fetch(`http://10.10.92.56:3000/api/user/signout`, { method: "POST" });
+      const res = await fetch(`${baseUrl}/api/user/signout`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) {
         console.log(data.message);

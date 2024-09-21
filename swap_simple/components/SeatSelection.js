@@ -10,6 +10,7 @@ import {
   StyleSheet,
   FlatList,
   ScrollView,
+  LogBox,
 } from "react-native";
 import LottieView from "lottie-react-native";
 import { AntDesign } from "@expo/vector-icons";
@@ -18,33 +19,33 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 import Entypo from '@expo/vector-icons/Entypo';
-<<<<<<< Updated upstream
-
-=======
 import GradientButton from "./GradientButton";
+import baseUrl from "../Services/constant";
 // import { , Text } from 'react-native';
->>>>>>> Stashed changes
+LogBox.ignoreAllLogs();
 
 const { width: screenWidth } = Dimensions.get("window");
 const animationHeight = screenWidth * (250 / 375);
 
 const SeatSelection = () => {
+  const { theme } = useSelector((state) => state.theme);
+  // console.log(theme);
    const route = useRoute();
    const navigation = useNavigation();
     const { pnrNumber } = route.params; // look to 
-    console.log(pnrNumber);
+    // console.log(pnrNumber);
   const [selectedCoaches, setSelectedCoaches] = useState({});
   const [coachInput, setCoachInput] = useState("");
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [suggestedCoaches, setSuggestedCoaches] = useState([]);
   const { currentUser } = useSelector((state) => state.user);
   const coachSuggestions = {
-    A: ["A1", "A2", "A3", "A4", "A5"],
+    A: ["A1", "A2", "A3", "A4", "A5","A6","A7","A8","A9","A10"],
     S: ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S9", "S10"],
-    B: ["B1", "B2", "B3", "B4", "B5"],
+    B: ["B1", "B2", "B3", "B4", "B5","B6","B7","B8","B9","B10"],
   };
   const handleOnClick=async()=>{
-    console.log("Hi right here ");
+    // console.log("Hi right here ");
     try{
       const preferenceList = [];
       for (const coach in selectedCoaches) {
@@ -53,7 +54,7 @@ const SeatSelection = () => {
         });
       }
 
-      const res = await fetch(`http://10.10.92.56:3000/api/pnr/${pnrNumber}/swap-seat`, {
+      const res = await fetch(`${baseUrl}/api/pnr/${pnrNumber}/swap-seat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -64,13 +65,13 @@ const SeatSelection = () => {
       });
     
       const response = await res.json();
-          console.log(response);
+          // console.log(response);
           if (response.success) {
 
-            console.log("Succed");
+            // console.log("Succed");
              navigation.navigate('SwapResults', { pnrNumber, result1: response.partiallySwaps, result2: response.perfectSwaps });
           } else {
-            console.log("failed");
+            // console.log("failed");
              navigation.navigate('SwapResults', { pnrNumber, result1: null, result2: null });
 
          
@@ -167,13 +168,7 @@ const SeatSelection = () => {
                 <LinearGradient
                   // Gradient colors
                   activeOpacity={1}
-<<<<<<< Updated upstream
-
-                  colors={["grey", "grey","grey","#e6e6e6"]}
-
-=======
                   colors={["#60A5FA", "#60A5FA","#60A5FA","#60A5FA"]}
->>>>>>> Stashed changes
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.gradientButton}
@@ -229,7 +224,7 @@ const SeatSelection = () => {
           </TouchableOpacity>
           </View>
 
-          <Text style={styles.selectedText}>Selected Coach and Seats</Text>
+          <Text style={[styles.selectedText, { color: theme === "dark" ? "white" : "black" }]}>Selected Coach and Seats</Text>
         </View>
       )}
       data={Object.entries(selectedCoaches)}
@@ -341,7 +336,7 @@ const styles = StyleSheet.create({
   selectedText: {
     fontSize: 15,
     fontWeight: "bold",
-    color: "white", // Light text for selected coach and seats section
+    // color: theme === "dark" ? "white" : "black", // Light text for selected coach and seats section
     marginTop: 20,
     marginBottom: 10,
     paddingHorizontal:16,

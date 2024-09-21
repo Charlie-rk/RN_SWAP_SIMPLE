@@ -6,6 +6,7 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
+  LogBox,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,8 +14,11 @@ import { useSelector } from "react-redux";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import CardList from "../components/CardList"; // You can implement this for React Native too
 // import CustomAlert from "../components/CustomAlert";
-
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import baseUrl from "../Services/constant";
+LogBox.ignoreAllLogs();
 const SwapResults = () => {
+  const { theme } = useSelector((state) => state.theme);
   const navigation = useNavigation();
   const route = useRoute();
   //   console.log("Route Let See--->",route);
@@ -47,7 +51,7 @@ const SwapResults = () => {
   const addRequest = async () => {
     try {
       const res = await fetch(
-        `http://10.10.92.56:3000/api/req/${currentUser._id}/${travel__Id}/add_request`,
+        `${baseUrl}/api/req/${currentUser._id}/${travel__Id}/add_request`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -64,8 +68,6 @@ const SwapResults = () => {
         navigation.navigate("Home");
       } else if (data.success === "true") {
         setAlertVisible(true)
-
-        
         Alert.alert(
           "Success",
           "Your request has been successfully pulled in the All Requests section! Please check your email for further updates or visit the Notification section."
@@ -81,11 +83,26 @@ const SwapResults = () => {
     if (!requestMade) {
       return (
         <View style={{ padding: 20, marginTop: 40 }}>
-          <Text style={{ textAlign: "center", fontSize: 28 }}>😭</Text>
-          <Text style={{ textAlign: "center", fontSize: 18 ,color:"white" }}>
-            No travelers found. Please wait for someone to respond to the
-            request.
-          </Text>
+          {/* <Text style={{ textAlign: "center", fontSize: 28 }}>😭</Text> */}
+          
+          {/* <View style={{ flex: 1, justifyContent: 'center', alignItems: '' }}> */}
+  <MaterialCommunityIcons 
+    name="crosshairs-question" 
+    size={100} 
+    color={theme === "dark" ? "white" : "black"} 
+  />
+  <Text 
+    style={{ 
+      textAlign: "center", 
+      fontSize: 18, 
+      color: theme === "dark" ? "white" : "black",
+      marginTop: 20 
+    }}
+  >
+    No travelers found. Please wait for someone to respond to the request.
+  </Text>
+{/* </View> */}
+
           <TouchableOpacity
             onPress={() => {
               setRequestMade(true);
@@ -159,14 +176,14 @@ const SwapResults = () => {
 
       {matchType === "Perfect" && (
         <View style={{ marginTop: 20 }}>
-          <Text style={{ textAlign: "center", fontSize: 12, color: "white" }}>
+          <Text style={{ textAlign: "center", fontSize: 12,  color: theme === "dark" ? "white" : "black", }}>
             🕵️‍♂️ You are looking for Perfect Matching 🕵️‍♂️
           </Text>
           <Text
             style={{
               textAlign: "center",
               fontSize: 12,
-              color: "#ffcccc",
+              color: theme === "dark" ? "white" : "black",
               fontWeight: "bold",
             }}
           >

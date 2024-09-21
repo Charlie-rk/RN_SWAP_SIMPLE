@@ -7,8 +7,8 @@ import { useNavigation } from "@react-navigation/native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import GradientButton from './GradientButton';
 const  PnrCard=({travel,type})=> {
-  console.log("Inside pnr Card");
-  console.log(travel);
+  // console.log("Inside pnr Card");
+  // console.log(travel);
   const nonConfirmedStatuses = ['RAC', 'GNWL', 'PQWL'];
   // const nonConfirmedStatuses = ['WL', 'RLWL', 'RAC', 'GNWL', 'PQWL'];
   const navigation = useNavigation();
@@ -65,27 +65,12 @@ const  PnrCard=({travel,type})=> {
             </Text>
           ))}
         </LinearGradient>
-<<<<<<< Updated upstream
-
-        <Button
-         title={isNotConfirmed ? 'Ticket Not Confirmed' : 'Go For Swap'}
-
-         color={isNotConfirmed ? '#ff5c33' : '#4d79ff'} // Red color for not confirmed
-
-          disabled={isNotConfirmed}
-          buttonStyle={styles.swapButton}
-          iconRight
-          icon={<HiOutlineArrowRight size={24} />}
-          onPress={() => navigation.navigate("SeatSelection", { pnrNumber: travel.pnrNo })}
-        />
-=======
         <GradientButton
         onPress={() => navigation.navigate("SeatSelection", { pnrNumber: travel.pnrNo })}
         icon={<Ionicons name="arrow-forward-circle" size={24} color="white" />}
         text='Go For Swap'
         isNotConfirmed={isNotConfirmed} // Pass the isNotConfirmed prop
       />
->>>>>>> Stashed changes
       </View>
     </ScrollView>
   );

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { Icon } from 'react-native-elements';
+import baseUrl from '../Services/constant';
 
 export default function NotificationCard(props) {
   const user = useSelector((state) => state.user);
@@ -22,7 +23,7 @@ export default function NotificationCard(props) {
   const markNotificationAsSeen = async () => {
     try {
       const res = await fetch(
-        `http://10.10.92.56:3000/api/pnr/markNotificationAsSeen/${user.currentUser._id}/${props.notificationId}`,
+        `${baseUrl}/api/pnr/markNotificationAsSeen/${user.currentUser._id}/${props.notificationId}`,
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -43,7 +44,7 @@ export default function NotificationCard(props) {
   const deactivateNotification = async () => {
     try {
       const res = await fetch(
-        `http://10.10.92.56:3000/api/pnr/deactivateNotification/${user.currentUser._id}/${props.notificationId}`,
+        `${baseUrl}/api/pnr/deactivateNotification/${user.currentUser._id}/${props.notificationId}`,
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -66,7 +67,7 @@ export default function NotificationCard(props) {
     setActive(false);
 
       if (props.subject === 'AcceptSeatSwap') {
-        const res = await fetch('http://10.10.92.56:3000/api/pnr/acceptSwap', {
+        const res = await fetch(`${baseUrl}/api/pnr/acceptSwap`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -81,7 +82,7 @@ export default function NotificationCard(props) {
           console.error('Failed to accept swap request');
         }
       } else if (props.subject === 'ConfirmYourSwap') {
-        const res = await fetch('http://10.10.92.56:3000/api/pnr/confirmSwap', {
+        const res = await fetch(`${baseUrl}/api/pnr/confirmSwap`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -110,7 +111,7 @@ export default function NotificationCard(props) {
     try {
     setActive(false);
 
-      const res = await fetch('http://10.10.92.56:3000/api/pnr/rejectSwapRequest', {
+      const res = await fetch(`${baseUrl}/api/pnr/rejectSwapRequest`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -149,7 +150,7 @@ export default function NotificationCard(props) {
           {
             text: 'Delete',
             onPress: async () => {
-              const res = await fetch('http://10.10.92.56:3000/api/pnr/deleteNotification', {
+              const res = await fetch(`${baseUrl}/api/pnr/deleteNotification`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

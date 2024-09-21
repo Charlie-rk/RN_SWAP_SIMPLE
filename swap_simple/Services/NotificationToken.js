@@ -1,5 +1,6 @@
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+import baseUrl from "./constant";
 // import { useSelector } from "react-redux";
 
 export const registerForPushNotificationsAsync = async (userId) => {
@@ -25,7 +26,7 @@ export const registerForPushNotificationsAsync = async (userId) => {
     console.log("Userid", userId);
     // Here, you can send the token to your backend server
     
-    const response = await fetch(`http://10.10.92.56:3000/api/user/updateExpoToken/${userId}`, {
+    const response = await fetch(`${baseUrl}/api/user/updateExpoToken/${userId}`, {
       method: 'PATCH', // or 'PUT' if you're updating the entire resource
       headers: {
         'Content-Type': 'application/json',
@@ -38,7 +39,7 @@ export const registerForPushNotificationsAsync = async (userId) => {
     }
 
     const responseData = await response.json();
-    console.log('Expo token updated on server:', responseData);
+    // console.log('Expo token updated on server:', responseData);
 
     return token;
   } catch (error) {

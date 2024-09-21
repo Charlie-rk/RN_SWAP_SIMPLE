@@ -41,7 +41,7 @@ mongoose.connect(url, {
     });
 
     const server = app.listen(3000, () => {
-        console.log("App is listening on hi port 3000");
+        console.log("App is listening on port 3000");
     });
     
 // app.use(express.json());
@@ -71,37 +71,3 @@ app.use((err, req, res, next) => {
         message,
     });
 });
-
-
-// Routes to control server
-// app.post('/start', (req, res) => {
-//     startServer();
-//     res.status(200).send('Server is starting...');
-// });
-
-// app.post('/stop', (req, res) => {
-//     stopServer();
-//     res.status(200).send('Server is stopping...');
-// });
-
-// app.post('/restart', (req, res) => {
-//     restartServer();
-//     res.status(200).send('Server is restarting...');
-// });
-
-// // Handle server close signal
-// process.on('SIGTERM', () => {
-//     console.log('SIGTERM signal received: closing HTTP server');
-//     server.close(() => {
-//         console.log('HTTP server closed');
-//         process.exit(0);
-//     });
-// });
-
-// process.on('SIGINT', () => {
-//     console.log('SIGINT signal received: closing HTTP server');
-//     server.close(() => {
-//         console.log('HTTP server closed');
-//         process.exit(0);
-//     });
-// });

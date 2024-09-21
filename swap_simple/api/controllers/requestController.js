@@ -4,9 +4,9 @@ import User from "../models/userModel.js";
 import { errorHandler } from "../utilis/error.js";
 
 export const getAll_Req = async (req, res, next) => {
-    console.log("RK________999999");
+    // console.log("RK________999999");
     try {
-      console.log("Pavri");
+      // console.log("Pavri");
       //console.log(req);
       const requests = await Request.find().select('-pnrNo').populate({
         path: 'user',
@@ -15,14 +15,14 @@ export const getAll_Req = async (req, res, next) => {
 
     //  console.log(requests);
     if(requests.length===0){
-        console.log("hii");
+        // console.log("hii");
       return  res.status(200).json({
             status: "202",
             success:"false",
             requests: requests
           });
     }
-    console.log(requests);
+    // console.log(requests);
       res.status(200).json({
         status: true,
         requests: requests
@@ -42,15 +42,15 @@ export const getAll_Req = async (req, res, next) => {
 export const addRequest=async(req,res,next)=>{
     const {userId}=req.params;
     const {travelId}=req.params;
-    console.log("ADD ons ");
-    console.log(travelId);
+    // console.log("ADD ons ");
+    // console.log(travelId);
     const user=await User.findById(userId);
     if(!user){
         return next(errorHandler('404',"User Not Found"));
     }
     const travel=await Travel.findById(travelId);
-    console.log("travel Model");
-    console.log(travel);
+    // console.log("travel Model");
+    // console.log(travel);
     if(!travel){
         return res.status(505).json({
             status:"false",
@@ -58,7 +58,7 @@ export const addRequest=async(req,res,next)=>{
         })
     }
    
-    console.log("ADDING REQUEST ---------------");
+    // console.log("ADDING REQUEST ---------------");
      //   console.log(travel);
     // const check=await Request.findOne({pnrNo:travel.pnrNo});
     // // uniqueness of pnr 
@@ -86,8 +86,8 @@ export const addRequest=async(req,res,next)=>{
     
      try{
         await request.save();
-        console.log("Request Model update ");
-        console.log(request);
+        // console.log("Request Model update ");
+        // console.log(request);
         return res.status(201).json({
             success:"true",
             message:"successfull",
@@ -99,12 +99,12 @@ export const addRequest=async(req,res,next)=>{
 }  
 
 export const  deleteReq=async(req,res,next)=>{
-    console.log("Hi deletion section");
+    // console.log("Hi deletion section");
     const {userId}=req.params;
     const {travelID}=req.params;
     //  travelID
         // "66446ed8bca05e71101bd5ce"
-    console.log(travelID);
+    // console.log(travelID);
     const user=await User.findById(userId);
     if(!user){
         return res.status(505).json({
@@ -121,10 +121,10 @@ export const  deleteReq=async(req,res,next)=>{
         })
     }
     const rest=await Request.findOne({travelID:travelID});
-   console.log(rest);
+  //  console.log(rest);
     const resl=await Request.findOneAndDelete({travelID:travelID});
    
-    console.log("deleted Success");
+    // console.log("deleted Success");
    // console.log(resl);
 
     res.status(202).json({                 

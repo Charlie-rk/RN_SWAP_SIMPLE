@@ -30,31 +30,22 @@ router.get("/:pnrNumber", async (req, res) => {
   console.log("GET DETAILS OF PNR ::")
   const { pnrNumber } = req.params;
   
- // const { user } = req.query; // Extract user from URL parameters
   const  userId  = req.query.userId; // Extract user from URL parameters
-  console.log(req.query.userId);
-  console.log(userId);
+
 
   const user=await User.findById(userId);
-   console.log(user);
-  // const travel = await Travel.findOne({ pnrNo: pnrNumber });
-  // if (travel) {
-  //   console.log(travel);
-  //   return res.status(201).json({ success: true, message: "Succesful", travel });
-  // }
 
-  console.log("---", pnrNumber);
 
   try {
-    console.log("hii");
+    // console.log("hii");
     const pnrStatus = await pnrController.getPNRStatus(pnrNumber);
-    console.log(pnrStatus);
-    console.log("byee");
+    // console.log(pnrStatus);
+    // console.log("byee");
     const passengers = pnrStatus.data.passengerInfo.map((passenger) => ({
       currentCoach: passenger.currentCoach,
       currentBerthNo: passenger.currentBerthNo,
     }));
-    console.log(passengers);
+    // console.log(passengers);
         
     const travel = new Travel({
       pnrNo: pnrNumber,
@@ -93,90 +84,24 @@ router.get("/:pnrNumber", async (req, res) => {
   }
 });
 
-// Route for getting PNR status
 
-// router.post("/:pnr/swap/request",async(req,res)=>{
-//   const {pnr}=req.params;// swaper
-//   const data=req.body.pnr;// to request
-//   const requester=await Travel.findOne({pnrNo:pnr}).populate("user");
-//   const toperson=await Travel.findOne({pnrNo:data}).populate("user");
-//   // Extract email addresses
-//   const requesterEmail ="rustampavr1275@gmail.com";
-//   const topersonEmail = "22cs01047@iitbbs.ac.in";
-//   console.log(requesterEmail);
-//   console.log(topersonEmail);
-//   // Define mail options
-//   const mailOptions = {
-//     from: { name: 'sangam', address: process.env.USER },
-//     subject: "Swap Request",
-//     text: "You have received a swap request.",
-//     html: "<b>You have received a swap request.</b>"
-//   };
-
-//   // Send email to toperson with requester as cc
-//   sendMail(topersonEmail, requesterEmail, mailOptions);
-//   console.log("Succesful");
-//   res.send("Fine");
-
-// });
-
-// router.post("/:pnrNumber/swap-seat", async (req, res) => {
-// console.log("Received swap request:");
-// const { pnrNumber } = req.params;
-// const pnrdata = parseInt(pnrNumber, 10);
-
-// const selectedCoaches = JSON.parse(req.body.selectedCoaches || '{}');
-// let allTravels = []; // Variable to store all travel data
-
-// try {
-//     // Iterate over selectedCoaches object
-//     for (const key in selectedCoaches) {
-//         const coach = Object.keys(selectedCoaches[key])[0];
-//         let seats = selectedCoaches[key][coach];
-
-//         // Convert seat numbers to strings and remove leading zeros
-//         seats = seats.map(seat => String(parseInt(seat, 10))); // Convert to number and back to string to remove leading zeros
-
-//         // Use async/await to wait for the database query
-//         const travelfilter = await Travel.find({
-//             'seatInfo.coach': coach,
-//             'seatInfo.berth': { $in: seats }, // Ensure seat numbers are treated as strings without leading zeros
-//         });
-
-//         // Concatenate the filtered travel data to the allTravels array
-//         allTravels = allTravels.concat(travelfilter);
-//     }
-
-//     // Check if allTravels array is empty
-//     if (allTravels.length === 0) {
-//         // Render the empty.ejs file
-//         res.render("empty.ejs", { pnrdata });
-//     } else {
-//         // Render the preferencelist.ejs file with the allTravels data
-//         res.render("preferencelist.ejs", { travels: allTravels, pnrdata });
-//     }
-// } catch (error) {
-//     console.error("Error processing swap request:", error);
-//     res.status(500).send("Error processing swap request");
-// }
-// });
 
 router.post("/:pnrNumber/swap-seat", async (req, res,next) => {
-  console.log("Received swap request:");
-  console.log(req.body);
-  console.log(req.body.selectedCoaches);
+  // console.log("Received swap request:");
+  // console.log(req.body);
+  // console.log(req.body.selectedCoaches);
   const { pnrNumber } = req.params;
 
-  console.log(pnrNumber);
+  // console.log(pnrNumber);
 
   const pnrdata = parseInt(pnrNumber, 10);
 
-  console.log("PNR DATA ", pnrdata);
+  // console.log("PNR DATA ", pnrdata);
 
   // console.log(req.body);
 
   const selectedCoaches = req.body.selectedCoaches || "{}";
-  console.log("final", selectedCoaches);
+  // console.log("final", selectedCoaches);
 
   // Convert selectedCoaches object to array format
   const selectedCoachesArray = Object.keys(selectedCoaches).map((coach) => {
@@ -186,7 +111,7 @@ router.post("/:pnrNumber/swap-seat", async (req, res,next) => {
   });
 
   
-  console.log("final-2", selectedCoachesArray);
+  // console.log("final-2", selectedCoachesArray);
   try {
     
     // Step 1: Find the travel model based on the PNR number
@@ -201,8 +126,8 @@ router.post("/:pnrNumber/swap-seat", async (req, res,next) => {
     const preferenceList = req.body.preferenceList; // Assuming preferenceList is provided in the request body
     travelModel.preferences = preferenceList; // Assign the preference list to travelModel
     await travelModel.save(); // Save the updated travel model
-    console.log("Updated Prefernce");
-    console.log(travelModel);
+    // console.log("Updated Prefernce");
+    // console.log(travelModel);
     // saving the request 
     //  const request=await findOne({trainID:travelModel._id});
     //   request.preferences=preferenceList;
@@ -235,7 +160,7 @@ router.post("/:pnrNumber/swap-seat", async (req, res,next) => {
     const allTravels = await Travel.find({
       "trainInfo.trainNo": trainNo,
       "trainInfo.dt": dt,
-      //pnrNo: { $ne: pnrdata } // Exclude the travel with the provided PNR number
+      pnrNo: { $ne: pnrdata } // Exclude the travel with the provided PNR number
     });
     // Step 4: Apply the final filter based on selected coach and seat numbers
     const selectedCoachesArray = Object.keys(selectedCoaches).map((coach) => {
@@ -284,11 +209,11 @@ router.post("/:pnrNumber/swap-seat", async (req, res,next) => {
     //     });
     // }
 
-    // Update preferences in the found travel model
-   console.log("PArtially");
-   console.log(partiallyFilteredTravels);
-   console.log("Perferct conditon");
-   console.log(perfectFilteredTravels);
+  //   // Update preferences in the found travel model
+  //  console.log("PArtially");
+  //  console.log(partiallyFilteredTravels);
+  //  console.log("Perferct conditon");
+  //  console.log(perfectFilteredTravels);
 
 
     res

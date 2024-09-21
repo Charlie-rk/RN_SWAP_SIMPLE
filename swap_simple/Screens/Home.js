@@ -10,6 +10,7 @@ import {
   Pressable,
   Text,
   ActivityIndicator,
+  LogBox,
 } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef, useState } from "react";
@@ -17,10 +18,13 @@ import { useDispatch, useSelector } from "react-redux";
 // import PnrCard from "./components/PnrCard";
 import PnrCard from './../components/PnrCard';
 import { setTravelID } from "../redux/user/userSlice";
+import baseUrl from "../Services/constant";
+LogBox.ignoreAllLogs();
 
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
 const Home=()=>{
+  const { theme } = useSelector((state) => state.theme);
   const { currentUser } = useSelector((state) => state.user);
   const [pnr, setPnr] = useState('');
   const [success, setSuccess] = useState(false);
@@ -38,38 +42,38 @@ const Home=()=>{
 // }
 
     const handleSubmit=async()=>{
-      console.log(pnr);
+      // console.log(pnr);
       setLoading(true);
       try{
       setSuccess(false);
-      const res = await fetch(`http://10.10.92.56:3000/api/pnr/${pnr}?userId=${currentUser._id}`, {
+      const res = await fetch(`${baseUrl}/api/pnr/${pnr}?userId=${currentUser._id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
 
       if (res.ok) {
         const data = await res.json();
-        console.log(data);
-        console.log("listen---******",data.travel);
+        // console.log(data);
+        // console.log("listen---******",data.travel);
        
         setLoading(false);
         setTravel(data.travel);
-        console.log(data.travel._id);
+        // console.log(data.travel._id);
         // Scroll to the section where PnrCard is displayed
         dispatch(setTravelID({ travel__Id: data.travel._id }));
-        console.log(data.travel._id);
-        console.log("Travel before navigate -----");
-        console.log(travel);
+        // console.log(data.travel._id);
+        // console.log("Travel before navigate -----");
+        // console.log(travel);
         setSuccess(true);
         // scrollUp();
        
       } else {
         setLoading(false);
-        console.log('Request failed with status:', res.status);
+        // console.log('Request failed with status:', res.status);
       }
     } catch (error) {
       setLoading(false);
-      console.log('Error:', error);
+      // console.log('Error:', error);
     }
 
     } ;
@@ -112,33 +116,6 @@ const Home=()=>{
                 value={pnr}
                 onChangeText={(text)=>setPnr(text)}
               />
-<<<<<<< Updated upstream
-             <Pressable
-                onPressIn={() => setPressed(true)}
-                onPressOut={() => setPressed(false)}
-                onPress={handleSubmit}
-                style={[
-                  styles.buttonContainer,
-                  pressed && styles.pressedButtonContainer,
-                ]}
-              >
-                {!pressed ? (
-                  <LinearGradient
-
-                    colors={['grey', 'grey', 'grey']} 
-
-
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.gradientButton}
-                  >
-                    <Text style={styles.buttonText}>Know Your Pnr Status</Text>
-                  </LinearGradient>
-                ) : (
-                  <Text style={styles.pressedButtonText}>Know Your Pnr Status</Text>
-                )}
-              </Pressable>
-=======
                 <Pressable
                   onPressIn={() => setPressed(true)}
                   onPressOut={() => setPressed(false)}
@@ -166,14 +143,14 @@ const Home=()=>{
                     </Text>
                   )}
                 </Pressable>
->>>>>>> Stashed changes
             </LinearGradient>
           </LinearGradient>
         </ImageBackground>
       </View>
-
+  
+      {/* style={[styles.container,{backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9'} */}
       {/* Below section for PNR details */}
-      <View style={styles.detailsContainer}>
+      <View style={[styles.detailsContainer,{backgroundColor: theme === 'dark' ? '#1e293b' : '#d9d9d9'}]}>
         {/* PNR Details card (implementation pending) */}
         {loading && <ActivityIndicator size="large" color="#8A2BE2" />}
         {success&&(<PnrCard travel={travel} type='PnrConfirm' />)}
@@ -236,7 +213,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#1e293b", // Dark background
+    // backgroundColor: "#1e293b", // Dark background
   },
   card: {
     backgroundColor: "#4f46e5",

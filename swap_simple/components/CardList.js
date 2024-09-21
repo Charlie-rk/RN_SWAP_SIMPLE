@@ -18,6 +18,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
+import baseUrl from './../Services/constant';
 
 const CardList = ({ travel, pnr }) => {
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,7 @@ const CardList = ({ travel, pnr }) => {
     setSwapModal(false);
     setLoading(true);
     try {
-      const res = await fetch(`http://10.10.92.56:3000/api/pnr/swapRequestNotification`, {
+      const res = await fetch(`${baseUrl}/api/pnr/swapRequestNotification`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -64,7 +65,7 @@ const CardList = ({ travel, pnr }) => {
     setSwapModal(false);
     setLoading(true);
     try {
-      const res = await fetch(`http://10.10.92.56:3000/api/req/${currentUser._id}/${travel__Id}/add_request`, {
+      const res = await fetch(`${baseUrl}/api/req/${currentUser._id}/${travel__Id}/add_request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });

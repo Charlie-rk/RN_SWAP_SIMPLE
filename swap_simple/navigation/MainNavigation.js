@@ -1,41 +1,47 @@
 // MainNavigation.js
 
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, Switch, Text, View } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import Toast from 'react-native-toast-message';
+// import Toast from 'react-native-toast-message';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Home from '../Screens/Home';
-<<<<<<< Updated upstream
 
 import Signin from '../Screens/sigin';
-=======
->>>>>>> Stashed changes
 import Signup from '../Screens/signup';
-import toastConfig from '../toastConfig';
+// import toastConfig from '../toastConfig';
 import SeatSelection from '../components/SeatSelection';
 import SwapResults from '../Screens/SwapResults';
 import All_request from '../Screens/All_request';
 import About from '../Screens/About';
 import Help from '../Screens/Help';
 import Profile from '../Screens/Profile';
-import Signin from '../Screens/Sigin';
+// import Signin from '../Screens/Sigin';
 import { useDispatch, useSelector } from 'react-redux';
 import { signoutSuccess } from '../redux/user/userSlice';
 import NotificationPage from '../Screens/NotificationPage';
 import { useNavigation } from '@react-navigation/native';
+import { toggleTheme } from '../redux/theme/themeSlice';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Entypo from '@expo/vector-icons/Entypo';
 
 
-const darkTheme = {
-  backgroundColor: '#1e293b',
-  textColor: 'white',
-  iconColor: 'white',
-};
+// const darkTheme = {
+//   backgroundColor: '#1e293b',
+//   textColor: 'white',
+//   iconColor: 'white',
+// };
 
 function ProfileScreen() {
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: darkTheme.backgroundColor }}>
       <Profile />
@@ -44,6 +50,12 @@ function ProfileScreen() {
 }
 
 function AboutScreen() {
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: darkTheme.backgroundColor }}>
       <About />
@@ -52,6 +64,12 @@ function AboutScreen() {
 }
 
 function LoginScreen() {
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   return (
     <View style={{ flex: 1, justifyContent: 'center', backgroundColor: darkTheme.backgroundColor }}>
       <Signin />
@@ -61,6 +79,12 @@ function LoginScreen() {
 }
 
 function SignupScreen() {
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   return (
     <View style={{ flex: 1, justifyContent: 'center', backgroundColor: darkTheme.backgroundColor }}>
       <Signup />
@@ -70,6 +94,12 @@ function SignupScreen() {
 }
 
 function HomeScreen({ navigation }) {
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: darkTheme.backgroundColor }}>
       <Home />
@@ -78,6 +108,12 @@ function HomeScreen({ navigation }) {
 }
 
 function SeatSelectionScreen() {
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: darkTheme.backgroundColor }}>
       <SeatSelection />
@@ -86,6 +122,12 @@ function SeatSelectionScreen() {
 }
 
 function SwapResultsScreen() {
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: darkTheme.backgroundColor }}>
       <SwapResults />
@@ -95,22 +137,27 @@ function SwapResultsScreen() {
 
 function AllRequestsScreen() {
   const { currentUser } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   return (
-<<<<<<< Updated upstream
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: "#1e293b"}}>
-      {/* <Text style={{ color: darkTheme.textColor }}>All Requests Screen</Text> */}
-      <All_request/>
-
-=======
     <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: "#1e293b" }}>
       {!currentUser?<Home/>:<All_request/>}
       {/* <All_request /> */}
->>>>>>> Stashed changes
     </View>
   );
 }
 
 function HelpScreen() {
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#1e293b',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: darkTheme.backgroundColor }}>
       <Help />
@@ -120,6 +167,12 @@ function HelpScreen() {
 }
 function NotificationScreen() {
   const { currentUser } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: '', backgroundColor: darkTheme.backgroundColor }}>
       {/* <Help /> */}
@@ -132,19 +185,36 @@ function NotificationScreen() {
 const HomeStack = createNativeStackNavigator();
 
 function HomeStackScreen() {
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
+  const handleThemeToggle = () => {
+    dispatch(toggleTheme());
+  };
   return (
     <HomeStack.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: darkTheme.backgroundColor },
         headerTintColor: darkTheme.textColor,
         headerRight: () => (
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 15 }}>
+          <Switch
+            value={theme === 'dark'}
+            onValueChange={handleThemeToggle}
+            thumbColor={theme === 'dark' ? 'white' : 'black'}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+          />
           <Ionicons
             name="notifications"
             size={25}
             color={darkTheme.iconColor}
-            style={{ marginRight: 15 }}
+            style={{ marginLeft: 10 }}
             onPress={() => alert('Notifications clicked!')}
           />
+        </View>
         ),
       }}
     >
@@ -152,11 +222,7 @@ function HomeStackScreen() {
       <HomeStack.Screen name="SeatSelection" component={SeatSelectionScreen} options={{ headerShown: false }} />
 
       <HomeStack.Screen name="SwapResults" component={SwapResultsScreen} options={{ headerShown: false }} />
-<<<<<<< Updated upstream
-
-=======
       <HomeStack.Screen name="Notification" component={NotificationScreen} options={{ headerShown: false }} />
->>>>>>> Stashed changes
     </HomeStack.Navigator>
   );
 }
@@ -165,6 +231,12 @@ const Tab = createBottomTabNavigator();
 
 function TabNavigator() {
   const { currentUser } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -219,9 +291,18 @@ const Drawer = createDrawerNavigator();
 
 export default function MainNavigation() {
   const { currentUser } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
+  const darkTheme = {
+    backgroundColor: theme === 'dark' ? '#1e293b' : '#f9f9f9',
+    textColor: theme === 'dark' ? 'white' : 'black',
+    iconColor: theme === 'dark' ? 'white' : 'black',
+  };
   const dispatch = useDispatch();
   const navigation=useNavigation();
-  
+  const handleThemeToggle = () => {
+    dispatch(toggleTheme());
+  };
+
   const handleSignout = async () => {
     console.log("Sign off");
     try {
@@ -239,12 +320,24 @@ export default function MainNavigation() {
 
   return (
     <Drawer.Navigator
-      initialRouteName="SwapSimple"
+      initialRouteName="SwapSimple" 
       screenOptions={{
+        
         headerRight: () => (
-          <Pressable onPress={() =>  navigation.navigate('Notification')}>
-          <FontAwesome name="bell" size={20} color="#660000" style={{ marginRight: 15 }}  />
-          </Pressable>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 20 }}>
+    <Pressable onPress={handleThemeToggle}>
+      {theme === 'dark' ? (
+          <MaterialIcons name="sunny" size={24} color="black" />
+      
+      ) : (
+        <Entypo name="moon" size={24} color="black" />
+       
+      )}
+    </Pressable>
+    <Pressable onPress={() => navigation.navigate('Notification')}>
+      <FontAwesome name="bell" size={20} color="#660000" style={{ marginLeft: 10 }} />
+    </Pressable>
+  </View>
         ),
         drawerStyle: {
           backgroundColor: darkTheme.backgroundColor,
@@ -302,6 +395,24 @@ export default function MainNavigation() {
           ),
         }}
       />
+       <Drawer.Screen
+        name="Switch Theme"
+        component={HomeScreen} // Dummy component, not actually used
+        options={{
+          drawerIcon: () => (
+            <Switch
+              value={theme === 'dark'}
+              onValueChange={handleThemeToggle}
+              thumbColor={theme === 'dark' ? 'white' : 'black'}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+            />
+          ),
+          drawerLabel: () => <Text style={{ color: darkTheme.textColor }}>Switch Theme</Text>,
+        }}
+      />
     </Drawer.Navigator>
+    
   );
 }
+
+   

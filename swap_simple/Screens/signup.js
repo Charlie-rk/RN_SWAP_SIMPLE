@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from 'expo-linear-gradient';
-import { Image, Pressable,ActivityIndicator, Alert } from 'react-native';
+import { Image, Pressable,ActivityIndicator, Alert, LogBox } from 'react-native';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import {
   KeyboardAvoidingView,
@@ -20,6 +20,8 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { resetError } from "../redux/user/userSlice";
 import OAuth from "../components/OAuth";
+import baseUrl from "../Services/constant";
+LogBox.ignoreAllLogs();
 const Signup = () => {
   const [isPressedSubmit, setIsPressedSubmit] = useState(false);
   const [isPressedGoogle, setIsPressedGoogle] = useState(false);
@@ -31,7 +33,7 @@ const Signup = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  console.log(errorMessage);
+  // console.log(errorMessage);
   // Function to show alert
   const showErrorAlert = (message) => {
     Alert.alert('Error', message, [
@@ -63,24 +65,24 @@ const Signup = () => {
   }, [errorMessage]);
   
   const handleSignup=async()=>{
-    console.log("Hii i am pressed");
+    // console.log("Hii i am pressed");
     const formData = {
       email,
       password,
       username
     };
-    console.log(email);
-    console.log(password);
-    console.log(username);
+    // console.log(email);
+    // console.log(password);
+    // console.log(username);
     if (!email || !password||!username) {
       return setErrorMessage("Please fill out all fields.");
     }
-    console.log(formData);
+    // console.log(formData);
     try {
       setLoading(true);
       setErrorMessage(null);
       // dispatch(signInStart());
-      const res = await fetch("http://10.10.92.56:3000/api/auth/signup", {
+      const res = await fetch(`${baseUrl}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -108,7 +110,7 @@ const Signup = () => {
         <View style={styles.headerTextContainer}>
         <FontAwesome5 name="hand-holding-heart" size={40} color="#10172a" />
           <Text style={styles.headerText}>Welcome !!  </Text>
-          <Text style={styles.headerText}>Please Sign In </Text>
+          <Text style={styles.headerText}>Please Sign up </Text>
         </View>
         <LottieView
           source={require("../assets/welcome.json")} // Your animation JSON file
