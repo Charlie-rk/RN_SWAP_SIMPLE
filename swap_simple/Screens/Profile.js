@@ -17,7 +17,7 @@ import { storage } from "../firebase"; // Using app2's storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { updateStart, updateSuccess, updateFailure, deleteUserSuccess, deleteUserFailure, signoutSuccess, deleteUserStart } from "../redux/user/userSlice";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import baseUrl from "../Services/constant";
 
 LogBox.ignoreAllLogs();
@@ -155,7 +155,12 @@ export default function DashProfile() {
         dispatch(deleteUserFailure(data.message));
       } else {
         dispatch(deleteUserSuccess(data));
-        navigation.navigate('Home');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+          })
+        );
       }
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
@@ -171,7 +176,12 @@ export default function DashProfile() {
         console.log(data.message);
       } else {
         dispatch(signoutSuccess());
-        navigation.navigate('Home');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+          })
+        );
         
       }
     } catch (error) {

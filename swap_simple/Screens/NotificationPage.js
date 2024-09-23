@@ -7,6 +7,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import baseUrl from '../Services/constant';
 LogBox.ignoreAllLogs();
 const NotificationPage = () => {
+  const { theme } = useSelector((state) => state.theme);
   const user = useSelector((state) => state.user);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -88,12 +89,12 @@ const NotificationPage = () => {
 
   if (noNotifications) {
     return (
-      <View style={styles.centered}>
+      <View style={[styles.centered,{}]}>
         {/* <Text style={styles.emoji}>😭</Text> */}
-        <Ionicons name="notifications-circle" size={100} color="white" />
-        <Text style={styles.message}>😒 No notifications found. </Text>
-        <Text style={styles.message}> Please wait for new notifications. </Text>
-        <Text style={styles.message}>Thank you for your patience! 😊</Text>
+        <Ionicons name="notifications-circle" size={100}  color={theme === "dark" ? "white" : "black"} />
+        <Text style={[styles.message,{color: theme === "dark" ? "white" : "black"}]}>😒 No notifications found. </Text>
+        <Text style={[styles.message,{color: theme === "dark" ? "white" : "black"}]}> Please wait for new notifications. </Text>
+        <Text style={[styles.message,{color: theme === "dark" ? "white" : "black"}]}>Thank you for your patience! 😊</Text>
       </View>
     );
   }
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 4,
     padding:2,
-    color:'white'
+    // color:'white'
   },
 });
 
