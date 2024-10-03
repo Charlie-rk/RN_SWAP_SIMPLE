@@ -20,7 +20,8 @@ export const registerForPushNotificationsAsync = async (userId) => {
       return;
     }
 
-    const token = (await Notifications.getExpoPushTokenAsync()).data;
+    // const token = (await Notifications.getExpoPushTokenAsync()).data;
+    const token = (await Notifications.getDevicePushTokenAsync()).data;
     console.log("Expo Push Token:", token);
     
     console.log("Userid", userId);

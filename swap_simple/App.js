@@ -8,6 +8,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Notifications from 'expo-notifications';
 import { store, persistor } from './redux/store';
+import baseUrl from './Services/constant';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,7 +38,7 @@ export default function App() {
   useEffect(() => {
     const checkBackendStatus = async () => {
       try {
-        const response = await fetch('https://backend-swap-simple.onrender.com/');
+        const response = await fetch(`${baseUrl}/`);
         console.log(response.status);
         const data = await response.text();
         if (response.status === 200) {

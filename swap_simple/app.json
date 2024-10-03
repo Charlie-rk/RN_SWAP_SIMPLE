@@ -19,6 +19,7 @@
       }
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "resizeMode": "contain",
@@ -29,7 +30,7 @@
         "CAMERA_ROLL",
         "NOTIFICATIONS"
       ],
-      "package": "com.charlie_rk.swapsimple",
+      "package": "com.swapsimple.swapsimple",
       "useNextNotificationsApi": true 
     },
     "web": {

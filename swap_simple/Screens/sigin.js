@@ -28,6 +28,9 @@ LogBox.ignoreAllLogs();
 const Signin = () => {
   const [isPressedSubmit, setIsPressedSubmit] = useState(false);
   const [isPressedGoogle, setIsPressedGoogle] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);  // New state
   // const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
@@ -35,6 +38,10 @@ const Signin = () => {
   const { loading, error: errorMessage } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const [isLoadingSendOtp, setIsLoadingSendOtp] = useState(false);
+const [isLoadingVerifyOtp, setIsLoadingVerifyOtp] = useState(false);
+const [isLoadingResendOtp, setIsLoadingResendOtp] = useState(false);
+
   // console.log(errorMessage);
   // Function to show alert
   const showErrorAlert = (message) => {
@@ -48,23 +55,90 @@ const Signin = () => {
     ]);
   };
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     dispatch(resetError());
-  //     Toast.show({
-  //       type: "customToast",
-  //       text1: "Swap Simple",
-  //       text2: "Welcome Back ",
-  //       visibilityTime: 1000, // Hide after 1 second
-  //     });
-  //   }, [dispatch])
-  // );
 
-  useEffect(() => {
-    if (errorMessage) {
-      showErrorAlert(errorMessage);
+  const handleForgotPassword = async () => {
+    try {
+      setIsLoadingSendOtp(true); // Start loading
+      if (!email) {
+        Alert.alert("Error", "Please enter your email.");
+        return;
+      }
+      const response = await axios.post(`${baseUrl}/api/auth/send-otp1`, { email });
+      if (response.data.message) {
+        setOtpSent(true);
+        Alert.alert("OTP Sent", "Please check your email for the OTP.");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to send OTP.");
+    } finally {
+      setIsLoadingSendOtp(false); // Stop loading
     }
-  }, [errorMessage]);
+  };
+  const handleResendOtp = async () => {
+    // Handle Resend OTP logic
+    // setResendOtp(true);
+    if (!email) {
+      Alert.alert("Error", "Please enter your email.");
+      return;
+    } try {
+      setIsLoadingResendOtp(true); // Start loading
+      handleForgotPassword(); // Resends OTP
+      Alert.alert("OTP Resent", "Check your email for the new OTP.");
+    } finally {
+      setIsLoadingResendOtp(false); // Stop loading
+    }
+    // handleForgotPassword(); // Resends OTP
+    // Alert.alert("OTP Resent", "Check your email for the new OTP.");
+  };
+  const handleVerifyOtpAndResetPassword_sigIN = async () => {
+    if (!email || !password || !otp) {
+      Alert.alert("Error", "Please fill all fields.");
+      return;
+    }
+    const formData = {
+      email,
+      password,
+      otp
+    };
+    try {
+      setIsLoadingVerifyOtp(true); // Start loading
+    //   const response = await axios.post(`${baseUrl}/api/auth/verify-otp1`, { email, otp, password });
+    //   console.log("Response************");
+    //  console.log(response.data);
+    
+     const res = await fetch(`${baseUrl}/api/auth/verify-otp1`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    const data = await res.json();
+
+    const userId=data._id;
+
+
+
+    //  const data = await response.json();
+    //  console.log("Data******************");
+    //  console.log(data);
+    //  const userId=data._id;
+     dispatch(signInSuccess(data));
+     const token=registerForPushNotificationsAsync(userId);
+    //  navigation.navigate("Home");
+      if (res.status==200) {
+        // console.log("Inside");
+        Alert.alert("Success", "Password reset successfully. Logging in...");
+        // Navigate to Home after successful password reset
+        navigation.navigate("Home");
+      }
+    } catch (error) {
+      // console.log("here");
+      // console.log(error);
+      Alert.alert("Error", "OTP verification failed.");
+    }finally {
+      setIsLoadingVerifyOtp(false); // Stop loading
+    }
+  };
+
 
   const handleLogin = async () => {
     const formData = {
@@ -93,7 +167,7 @@ const Signin = () => {
         navigation.navigate("Home");
       }
       const token=registerForPushNotificationsAsync(userId);
-      // console.log(token);
+      console.log(token);
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
@@ -124,6 +198,16 @@ const Signin = () => {
         {loading && <ActivityIndicator size="large" color="#8A2BE2" />}
         
         <View style={styles.footer}>
+        {isLoadingSendOtp &&  <View style={styles.loaderOverlay}>
+          <ActivityIndicator size="large" color="#8A2BE2" />
+        </View>}
+        {isLoadingVerifyOtp && <View style={styles.loaderOverlay}>
+          <ActivityIndicator size="large" color="#8A2BE2" />
+        </View>}
+        {isLoadingResendOtp && <View style={styles.loaderOverlay}>
+          <ActivityIndicator size="large" color="#8A2BE2" />
+        </View>}
+
           <View style={styles.inputContainer}>
             {/* Email Input */}
             <InputField
@@ -141,35 +225,108 @@ const Signin = () => {
               value={password}
               onChangeText={(text) => setPassword(text)}
             />
+            {isForgotPassword && (
+              <>
+                {/* OTP Input */}
+                <InputField
+                icon={<AntDesign name="key" size={24} color="grey" />}
+                placeholder="Enter OTP"
+                value={otp}
+                onChangeText={(text) => setOtp(text)}
+              />
+               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                {/* Resend OTP Button */}
+                <Pressable style={styles.link} onPress={handleResendOtp}>
+                  <Text style={styles.linkText}>Resend OTP</Text>
+                </Pressable>
+                <Pressable style={styles.link} onPress={() => setIsForgotPassword(false)}>
+                  <Text style={styles.linkText}>Go to  Login</Text>
+                </Pressable>
+                </View>
+              </>
+            )}
+
           </View>
 
-          {/* Submit Button */}
-          <Pressable
-            onPressIn={() => setIsPressedSubmit(true)}
-            onPressOut={() => setIsPressedSubmit(false)}
-            onPress={handleLogin}
-            style={[
-              styles.buttonContainer,
-              isPressedSubmit && styles.pressedButtonContainer,
-            ]}
-          >
-            {!isPressedSubmit ? (
-              <LinearGradient
-                colors={["#8A2BE2", "#FF1493"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.gradientButton}
+          {!isForgotPassword&&<>
+            <Pressable
+                onPressIn={() => setIsPressedSubmit(true)}
+                onPressOut={() => setIsPressedSubmit(false)}
+                onPress={handleLogin}
+                style={[
+                  styles.buttonContainer,
+                  isPressedSubmit && styles.pressedButtonContainer,
+                ]}
               >
-                <Text style={styles.buttonText}>Submit</Text>
-              </LinearGradient>
-            ) : (
-              <Text style={styles.pressedButtonText}>Submit</Text>
-            )}
-          </Pressable>
-
-          {/* Continue with Google Button */}
-          <OAuth/>
-        
+                {!isPressedSubmit ? (
+                  <LinearGradient
+                    colors={["#8A2BE2", "#FF1493"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.gradientButton}
+                  >
+                    <Text style={styles.buttonText}>Sign In</Text>
+                  </LinearGradient>
+                ) : (
+                  <Text style={styles.pressedButtonText}>Sign In</Text>
+                )}
+              </Pressable>
+          
+          </>}
+          {/* Submit Button */}
+          {!isForgotPassword ? (
+            <>
+              <Pressable style={styles.link} onPress={() => setIsForgotPassword(true)}>
+                <Text style={styles.linkText}>Forgot Password?</Text>
+              </Pressable>
+            </>
+          ) : otpSent ? (
+            <Pressable
+              onPressIn={() => setIsPressedSubmit(true)}
+              onPressOut={() => setIsPressedSubmit(false)}
+              onPress={handleVerifyOtpAndResetPassword_sigIN}
+              style={[
+                styles.buttonContainer,
+                isPressedSubmit && styles.pressedButtonContainer,
+              ]}
+            >
+              {!isPressedSubmit ? (
+                <LinearGradient
+                  colors={["#8A2BE2", "#FF1493"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.gradientButton}
+                >
+                  <Text style={styles.buttonText}>Verify OTP & Reset Password</Text>
+                </LinearGradient>
+              ) : (
+                <Text style={styles.pressedButtonText}>Verify OTP & Reset Password</Text>
+              )}
+            </Pressable>
+          ) : (
+            <Pressable
+              onPressIn={() => setIsPressedSubmit(true)}
+              onPressOut={() => setIsPressedSubmit(false)}
+              onPress={handleForgotPassword}
+              style={[
+                styles.buttonContainer,
+                isPressedSubmit && styles.pressedButtonContainer,
+              ]}
+            >
+              {!isPressedSubmit ? (
+                <LinearGradient
+                  colors={["#8A2BE2", "#FF1493"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.gradientButton}
+                >
+                  <Text style={styles.buttonText}>Send OTP</Text>
+                </LinearGradient>
+              ) : (
+                <Text style={styles.pressedButtonText}>Send OTP</Text>
+              )}
+            </Pressable>
+          )}
           <Pressable
             onPress={() => navigation.navigate("Signup")}
             style={{ marginTop: 15 }}
@@ -220,6 +377,17 @@ const InputField = ({
 
 // Styles
 const styles = StyleSheet.create({
+  loaderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent white
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000, // Ensure it appears above other components
+  },
   container: {
     flex: 1,
     backgroundColor: "white",
@@ -337,6 +505,8 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
   },
+  link: { marginTop: 15 },
+  linkText: { textAlign: "center", color: "white", fontSize: 16 },
 });
 
 export default Signin;

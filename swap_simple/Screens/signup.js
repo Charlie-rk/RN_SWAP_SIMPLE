@@ -16,11 +16,12 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { useCallback, useEffect, useState } from "react";
 import LottieView from "lottie-react-native";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
-import { resetError } from "../redux/user/userSlice";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+// import { resetError } from "../redux/user/userSlice";
 import OAuth from "../components/OAuth";
 import baseUrl from "../Services/constant";
+import { ScrollView } from "react-native";
 LogBox.ignoreAllLogs();
 const Signup = () => {
   const [isPressedSubmit, setIsPressedSubmit] = useState(false);
@@ -31,6 +32,9 @@ const Signup = () => {
   
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [otp, setOtp] = useState('');
+const [otpSent, setOtpSent] = useState(false);
+const [otpLoading, setOtpLoading] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   // console.log(errorMessage);
@@ -46,17 +50,6 @@ const Signup = () => {
     ]);
   };
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     dispatch(resetError());
-  //     Toast.show({
-  //       type: "customToast",
-  //       text1: "Swap Simple",
-  //       text2: "Welcome Back ",
-  //       visibilityTime: 1000, // Hide after 1 second
-  //     });
-  //   }, [dispatch])
-  // );
 
   useEffect(() => {
     if (errorMessage) {
@@ -102,46 +95,92 @@ const Signup = () => {
     }
 
   };
+  const sendOtp = async () => {
+    if (!email) {
+      return setErrorMessage('Please enter your email to receive OTP.');
+    }
+    setOtpLoading(true); // Start OTP loader
+    try {
+      const response = await fetch(`${baseUrl}/api/auth/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      
+      if (response.ok) {
+        setOtpSent(true);
+        Alert.alert('OTP Sent', 'Please check your email for the OTP.');
+      } else {
+        setErrorMessage(data.message);
+      }
+    } catch (error) {
+      setErrorMessage('Error sending OTP. Please try again.');
+    }
+    finally {
+      setOtpLoading(false); // End OTP loader
+    }
+  };
+  const verifyOtp = async () => {
+    if (!otp) {
+      return setErrorMessage('Please enter the OTP.');
+    }
+  
+    try {
+      const response = await fetch(`${baseUrl}/api/auth/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp }),
+      });
+      const data = await response.json();
+  
+      if (response.ok) {
+        handleSignup(); // Proceed with the signup if OTP is verified
+      } else {
+        setErrorMessage(data.message);
+      }
+    } catch (error) {
+      setErrorMessage('Error verifying OTP.');
+    }
+  };
+  
 
   return (
-    <View style={styles.container}>
-        {/* <Toast position="top" topOffset={-20} /> */}
-      <View style={styles.header}>
-        <View style={styles.headerTextContainer}>
-        <FontAwesome5 name="hand-holding-heart" size={40} color="#10172a" />
-          <Text style={styles.headerText}>Welcome !!  </Text>
-          <Text style={styles.headerText}>Please Sign up </Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView contentContainerStyle={styles.innerContainer}>
+        <View style={styles.header}>
+          <View style={styles.headerTextContainer}>
+            <FontAwesome5 name="hand-holding-heart" size={40} color="#10172a" />
+            <Text style={styles.headerText}>Welcome !!</Text>
+            <Text style={styles.headerText}>Please Sign up</Text>
+          </View>
+          <LottieView
+            source={require("../assets/welcome.json")} 
+            style={styles.animation}
+            autoPlay
+            loop
+          />
         </View>
-        <LottieView
-          source={require("../assets/welcome.json")} // Your animation JSON file
-          style={styles.animation}
-          autoPlay
-          loop
-        />
-      </View>
 
-      <KeyboardAvoidingView
-        style={styles.innerContainer}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-          {loading && <ActivityIndicator size="large" color="#8A2BE2" />}
+        {loading && <ActivityIndicator size="large" color="#8A2BE2" />}
+
         <View style={styles.footer}>
           <View style={styles.inputContainer}>
-          <InputField
-                icon={<AntDesign name="user" size={24} color="grey" />}
-                placeholder="Enter your name"
-                value={username}
-                onChangeText={(text) => setUsername(text)}
-              />
-            {/* Email Input */}
+            <InputField
+              icon={<AntDesign name="user" size={24} color="grey" />}
+              placeholder="Enter your name"
+              value={username}
+              onChangeText={(text) => setUsername(text)}
+            />
             <InputField
               icon={<Fontisto name="email" size={24} color="grey" />}
               placeholder="Enter your email"
               value={email}
               onChangeText={(text) => setEmail(text)}
             />
-
-            {/* Password Input */}
             <InputField
               icon={<EvilIcons name="lock" size={30} color="red" />}
               placeholder="Enter your password"
@@ -149,64 +188,184 @@ const Signup = () => {
               value={password}
               onChangeText={(text) => setPassword(text)}
             />
-          </View>
 
-          {/* Submit Button */}
-         
-          <Pressable
-            onPressIn={() => setIsPressedSubmit(true)}
-            onPressOut={() => setIsPressedSubmit(false)}
-            onPress={handleSignup}
-            style={[
-              styles.buttonContainer,
-              isPressedSubmit && styles.pressedButtonContainer,
-            ]}
-          >
-            {!isPressedSubmit ? (
-              <LinearGradient
-                colors={['#8A2BE2', '#FF1493']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.gradientButton}
-              >
-                <Text style={styles.buttonText}>SignUp</Text>
-              </LinearGradient>
-            ) : (
-              <Text style={styles.pressedButtonText}>SignUp</Text>
+            {otpSent && (
+              <InputField
+                icon={<AntDesign name="key" size={24} color="grey" />}
+                placeholder="Enter OTP"
+                value={otp}
+                onChangeText={(text) => setOtp(text)}
+              />
             )}
-          </Pressable>
-
-          {/* Continue with Google Button */}
-          <OAuth/>
+          </View>
          
-        <View className="flex-row justify-between">
-        <Pressable
-         onPress={() => navigation.navigate("Login")}
-          style={{ marginTop: 15 }}
-        >
-          <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
-          Already have an account? Sign In
-          </Text>
-        </Pressable>
+         
+          {otpLoading ? (
+            <ActivityIndicator size="large" color="#FF1493" /> // OTP loader
+          ) : (
+            <Pressable
+              onPressIn={() => setIsPressedSubmit(true)}
+              onPressOut={() => setIsPressedSubmit(false)}
+              onPress={otpSent ? verifyOtp : sendOtp}
+              style={[styles.buttonContainer, isPressedSubmit && styles.pressedButtonContainer]}
+            >
+              {!isPressedSubmit ? (
+                <LinearGradient
+                  colors={['#8A2BE2', '#FF1493']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.gradientButton}
+                >
+                  <Text style={styles.buttonText}>
+                    {otpSent ? 'Verify OTP' : 'Send OTP'}
+                  </Text>
+                </LinearGradient>
+              ) : (
+                <Text style={styles.pressedButtonText}>
+                  {otpSent ? 'Verify OTP' : 'Send OTP'}
+                </Text>
+              )}
+            </Pressable>
+          )}
+
+          {/* <OAuth /> */}
+
+          <Pressable onPress={() => navigation.navigate("Login")}>
+            <Text style={{ textAlign: "center", color: "gray", fontSize: 16, marginTop: 15 }}>
+              Already have an account? Sign In
+            </Text>
+          </Pressable>
         </View>
-             {/* Footer with Social Icons */}
-             <View style={styles.footerIconsContainer}>
-  <Text style={styles.footerTitle}>Follow Us</Text>
-  <View style={styles.iconRow}>
-    <AntDesign name="linkedin-square" size={24} color="white" />
-    <AntDesign name="facebook-square" size={24} color="white" />
-    <AntDesign name="instagram" size={24} color="white" />
-    <AntDesign name="github" size={24} color="white" />
-  </View>
-  <Text style={styles.copyright}>
-    &copy; {new Date().getFullYear()} Sangam & Rustam
-  </Text>
-</View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+//     <View style={styles.container}>
+//         {/* <Toast position="top" topOffset={-20} /> */}
+//       <View style={styles.header}>
+//         <View style={styles.headerTextContainer}>
+//         <FontAwesome5 name="hand-holding-heart" size={40} color="#10172a" />
+//           <Text style={styles.headerText}>Welcome !!  </Text>
+//           <Text style={styles.headerText}>Please Sign up </Text>
+//         </View>
+//         <LottieView
+//           source={require("../assets/welcome.json")} // Your animation JSON file
+//           style={styles.animation}
+//           autoPlay
+//           loop
+//         />
+//       </View>
+
+//       <KeyboardAvoidingView
+//         style={styles.innerContainer}
+//         behavior={Platform.OS === "ios" ? "padding" : "height"}
+//       >
+//           {loading && <ActivityIndicator size="large" color="#8A2BE2" />}
+//         <View style={styles.footer}>
+//           <View style={styles.inputContainer}>
+//           <InputField
+//                 icon={<AntDesign name="user" size={24} color="grey" />}
+//                 placeholder="Enter your name"
+//                 value={username}
+//                 onChangeText={(text) => setUsername(text)}
+//               />
+//             {/* Email Input */}
+//             <InputField
+//               icon={<Fontisto name="email" size={24} color="grey" />}
+//               placeholder="Enter your email"
+//               value={email}
+//               onChangeText={(text) => setEmail(text)}
+//             />
+
+//             {/* Password Input */}
+//             <InputField
+//               icon={<EvilIcons name="lock" size={30} color="red" />}
+//               placeholder="Enter your password"
+//               secureTextEntry
+//               value={password}
+//               onChangeText={(text) => setPassword(text)}
+//             />
+//           </View>
+
+//           {/* Submit Button */}
+         
+//           <Pressable
+//             onPressIn={() => setIsPressedSubmit(true)}
+//             onPressOut={() => setIsPressedSubmit(false)}
+//             onPress={handleSignup}
+//             style={[
+//               styles.buttonContainer,
+//               isPressedSubmit && styles.pressedButtonContainer,
+//             ]}
+//           >
+//             {!isPressedSubmit ? (
+//               <LinearGradient
+//                 colors={['#8A2BE2', '#FF1493']}
+//                 start={{ x: 0, y: 0 }}
+//                 end={{ x: 1, y: 1 }}
+//                 style={styles.gradientButton}
+//               >
+//                 <Text style={styles.buttonText}>SignUp</Text>
+//               </LinearGradient>
+//             ) : (
+//               <Text style={styles.pressedButtonText}>SignUp</Text>
+//             )}
+//           </Pressable>
+
+//           {/* Continue with Google Button */}
+//           <OAuth/>
+//           {!otpSent ? (
+//     <>
+//       {/* <InputField
+//         icon={<Fontisto name="email" size={24} color="grey" />}
+//         placeholder="Enter your email"
+//         value={email}
+//         onChangeText={(text) => setEmail(text)}
+//       /> */}
+//       <Pressable onPress={sendOtp} style={styles.buttonContainer}>
+//         <Text style={styles.buttonText}>Send OTP</Text>
+//       </Pressable>
+//     </>
+//   ) : (
+//     <>
+//       <InputField
+//         icon={<AntDesign name="key" size={24} color="grey" />}
+//         placeholder="Enter OTP"
+//         value={otp}
+//         onChangeText={(text) => setOtp(text)}
+//       />
+//       <Pressable onPress={verifyOtp} style={styles.buttonContainer}>
+//         <Text style={styles.buttonText}>Verify OTP</Text>
+//       </Pressable>
+//     </>
+//   )}
+         
+//         <View className="flex-row justify-between">
+//         <Pressable
+//          onPress={() => navigation.navigate("Login")}
+//           style={{ marginTop: 15 }}
+//         >
+//           <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
+//           Already have an account? Sign In
+//           </Text>
+//         </Pressable>
+//         </View>
+//              {/* Footer with Social Icons */}
+//              <View style={styles.footerIconsContainer}>
+//   <Text style={styles.footerTitle}>Follow Us</Text>
+//   <View style={styles.iconRow}>
+//     <AntDesign name="linkedin-square" size={24} color="white" />
+//     <AntDesign name="facebook-square" size={24} color="white" />
+//     <AntDesign name="instagram" size={24} color="white" />
+//     <AntDesign name="github" size={24} color="white" />
+//   </View>
+//   <Text style={styles.copyright}>
+//     &copy; {new Date().getFullYear()} Sangam & Rustam
+//   </Text>
+// </View>
 
 
-        </View>
-      </KeyboardAvoidingView>
-    </View>
+//         </View>
+//       </KeyboardAvoidingView>
+    // </View>
   );
 }
 

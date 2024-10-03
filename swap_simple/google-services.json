@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "161048170807",
+    "project_id": "swapsimple-8dbf5",
+    "storage_bucket": "swapsimple-8dbf5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:161048170807:android:c4fa93a9322637aa8c0ab2",
+        "android_client_info": {
+          "package_name": "com.swapsimple.swapsimple"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgByB1WsdyDKu-xgDpdxvp12nlmuyD3rg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
